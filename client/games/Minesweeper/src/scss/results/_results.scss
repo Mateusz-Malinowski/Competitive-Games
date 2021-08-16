@@ -1,0 +1,55 @@
+@import 'results-button';
+
+.results-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    visibility: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: $shadow-color-sharp;
+    color: $text-color-light;
+
+    .results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0 0 5px $shadow-color-solid;
+        background-color: $results-color;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid $results-border-color;
+        text-shadow: 0 0 5px $shadow-color-solid;
+
+        .info-results {
+            margin-bottom: 20px;
+
+            &.win {
+                color: $results-win-text-color;
+            }
+
+            &.fail {
+                color: $results-fail-text-color;
+            }
+        }
+
+        .timer-info-results {
+            font-size: 1.25em;
+        }
+
+        .timer-results {
+            font-family: monospace;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .button-results {
+            @extend .button;
+            @include resultsButton(light);
+            text-shadow: none;
+        }
+    }
+}

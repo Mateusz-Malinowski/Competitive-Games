@@ -1,0 +1,27 @@
+@mixin resultsButton($theme) {
+    $button-color: null; $text-color: null;
+
+    @if $theme == light {
+        $button-color: $button-color-light;
+        $text-color: $text-color-dark;
+    }
+    @else if $theme == dark {
+        $button-color: $button-color-dark;
+        $text-color: $text-color-light;
+    }
+
+    padding: 5px 10px;
+    background-color: $button-color;
+    color: $text-color;
+    font-size: 1.25em;
+    box-shadow: 0 0 5px $shadow-color-normal;
+
+    transition-property: transform, box-shadow;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+
+    &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px $shadow-color-normal;
+    }
+}
