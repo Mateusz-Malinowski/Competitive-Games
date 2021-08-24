@@ -6,7 +6,7 @@ export default class Logger {
     const date = new Date();
     const dateString = getCurrentDateString(date);
     const timeString = getCurrentTimeString(date);
-    
+
     return colors.grey(`[${dateString} - ${timeString}]`);
   }
 

@@ -1,12 +1,12 @@
 import WebSocket from 'ws';
 import { removeElementFromArray } from './utilities';
 import Logger from './Logger';
-import Player from './Player';
-import MinesweeperPlayer from './games/Minesweeper/MinesweeperPlayer';
+import ServerPlayer from './ServerPlayer';
+import MinesweeperPlayer from './games/Minesweeper/Player';
 
 export default class GameServer {
   private webSocketServer: WebSocket.Server;
-  private players: Player[] = [];
+  private players: ServerPlayer[] = [];
   private pingInterval: NodeJS.Timer;
   private pingIntervalTime: number = 10000;
 
@@ -40,7 +40,7 @@ export default class GameServer {
     });
   }
 
-  private createPlayer(url: string, webSocket: WebSocket, ip: string): Player {
+  private createPlayer(url: string, webSocket: WebSocket, ip: string): ServerPlayer {
     switch(url) {
       case '/Minesweeper': return new MinesweeperPlayer(this, webSocket, ip);
       default: return;
@@ -74,11 +74,11 @@ export default class GameServer {
     }
   }
 
-  public addPlayer(player: Player): void {
+  public addPlayer(player: ServerPlayer): void {
     this.players.push(player);
   }
 
-  public removePlayer(player: Player): void {
+  public removePlayer(player: ServerPlayer): void {
     removeElementFromArray(this.players, player);
   }
 

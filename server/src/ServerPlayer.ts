@@ -1,14 +1,14 @@
 import WebSocket from "ws";
 import GameServer from "./GameServer";
 import Logger from "./Logger";
-import PacketHandler from "./PacketHandler";
+import ServerPacketHandler from "./ServerPacketHandler";
 
-export default abstract class Player {
+export default abstract class ServerPlayer {
   private gameServer: GameServer;
   public webSocket: WebSocket;
   public ip: string;
   public isAlive: Boolean = true;
-  public abstract packetHandler: PacketHandler;
+  public abstract packetHandler: ServerPacketHandler;
 
   constructor(gameServer: GameServer, webSocket: WebSocket, ip: string) {
     this.gameServer = gameServer;
