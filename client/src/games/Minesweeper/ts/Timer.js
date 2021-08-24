@@ -1,4 +1,4 @@
-import { padNumber } from "./utilities.js";
+import { padNumber } from "./utilities";
 
 export default class Timer {
   constructor(timerWrapper) {

@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 import { removeElementFromArray } from './utilities';
 import Logger from './Logger';
 import Player from './Player';
+import MinesweeperPlayer from './games/Minesweeper/MinesweeperPlayer';
 
 export default class GameServer {
   private webSocketServer: WebSocket.Server;
@@ -24,9 +25,26 @@ export default class GameServer {
   private listenForConnections(): void {
     this.webSocketServer.on('connection', (webSocket, req) => {
       const ip = req.socket.remoteAddress;
+      if (typeof(ip) != 'string') return;
 
-      new Player(this, webSocket, ip);
+      const url = req.url;
+      if (typeof(url) != 'string') return;
+
+      const player = this.createPlayer(url, webSocket, ip);
+      if (!player) return;
+
+      Logger.info(`${ip} has connected`);
+
+      player.create();
+      this.addPlayer(player);
     });
+  }
+
+  private createPlayer(url: string, webSocket: WebSocket, ip: string): Player {
+    switch(url) {
+      case '/Minesweeper': return new MinesweeperPlayer(this, webSocket, ip);
+      default: return;
+    }
   }
 
   private listenForClose(): void {
@@ -50,7 +68,7 @@ export default class GameServer {
         player.webSocket.terminate();
         return;
       }
-  
+
       player.isAlive = false;
       player.webSocket.ping();
     }

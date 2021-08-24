@@ -30,6 +30,11 @@ class App {
     });
 
     this.express.use('/', router);
+
+    this.express.use((req, res) => {
+      res.status(404);
+      res.sendFile(path.join(this.clientDistPath, '404/index.html'));
+    });
   }
 }
 

@@ -1,0 +1,30 @@
+.connection-error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+    display: none;
+
+    .error {
+        color: $text-color-light;
+        border-radius: 15px;
+        border: 1px solid $error-border-color;
+        overflow: hidden;
+    }
+
+    .header, .message {
+        display: flex;
+        justify-content: center;
+        padding: 30px;
+    }
+
+    .header {
+        font-size: 2em;
+        background-color: $error-header-background-color;
+    }
+
+    .message {
+        background-color: $error-message-background-color;
+    }
+}

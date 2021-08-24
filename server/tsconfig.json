@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
       "outDir": "dist",
+      "rootDirs": ["../global", "src"],
       "noImplicitAny": true,
       "sourceMap": true,
       "esModuleInterop": true

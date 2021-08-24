@@ -1,25 +1,22 @@
 import WebSocket from "ws";
 import GameServer from "./GameServer";
 import Logger from "./Logger";
+import PacketHandler from "./PacketHandler";
 
-export default class Player {
+export default abstract class Player {
   private gameServer: GameServer;
   public webSocket: WebSocket;
-  private ip: string;
+  public ip: string;
   public isAlive: Boolean = true;
+  public abstract packetHandler: PacketHandler;
 
   constructor(gameServer: GameServer, webSocket: WebSocket, ip: string) {
     this.gameServer = gameServer;
     this.webSocket = webSocket;
     this.ip = ip;
-
-    this.create();
   }
 
   create(): void {
-    Logger.info(`${this.ip} has connected`);
-    this.gameServer.addPlayer(this);
-
     this.listenForPong();
     this.listenForClose();
     this.listenForMessage();
@@ -40,7 +37,7 @@ export default class Player {
 
   listenForMessage(): void {
     this.webSocket.on('message', (message) => {
-        
+      this.packetHandler.handlePacket(message);
     });
   }
 }

@@ -1,23 +1,43 @@
 import MapController from './MapController';
 
 export default class Main {
+  private appWrapper: HTMLDivElement;
   private mapWrapper: HTMLDivElement;
   private timerWrapper: HTMLDivElement;
+  private errorWrapper: HTMLDivElement;
   private mapController: MapController;
 
   constructor() {
+    this.appWrapper = document.querySelector('#app');
     this.mapWrapper = document.querySelector('#map');
     this.timerWrapper = document.querySelector('#timer');
+    this.errorWrapper = document.querySelector('.connection-error');
 
-    this.connect();
-    this.init();
+    this.start();
   }
 
-  private connect(): void {
-    const webSocket = new WebSocket('ws://localhost:3000');
+  private async start(): Promise<void> {
+    try {
+      await this.connect();
+      this.init();
+    }
+    catch {
+      this.appWrapper.style.display = 'none';
+      this.errorWrapper.style.display = 'flex';
+    }
+  }
 
-    webSocket.addEventListener('message', (event) => {
-      console.log('Message from server', event.data);
+  private connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const webSocket = new WebSocket('ws://localhost:3000/Minesweeper');
+
+      webSocket.addEventListener('error', () => {
+        reject();
+      });
+
+      webSocket.addEventListener('open', () => {
+        resolve();
+      });
     });
   }
 
