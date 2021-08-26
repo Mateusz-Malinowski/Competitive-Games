@@ -28,3 +28,15 @@ export function removeElementFromArray<T>(array: Array<T>, element: T) {
   const index = array.indexOf(element);
   array.splice(index, 1);
 }
+
+/**
+ * 
+ * @param min minimum value
+ * @param max maximum value
+ * @returns a number in <min, max)
+ */
+export function getRandomInt(min: number, max: number): number {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}

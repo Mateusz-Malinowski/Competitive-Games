@@ -1,19 +1,30 @@
+import ClientPacket from "./packets/client/ClientPacket";
+import { ClientPacketType } from "./packets/client/ClientPacketType";
+
 export default class ClientPacketController {
   public static cast(packet: any): ClientPacket {
     const object = JSON.parse(packet);
-    const objectLength = Object.keys(object).length;
 
-    const interfaceLength = 2;
+    if (typeof (object.type) != 'number') throw `Packet type is not a number`;
 
-    if (objectLength != interfaceLength) throw `Object length is ${objectLength}, should be ${interfaceLength}`;
-    if (typeof (object.row) != 'number') throw `row property is not a number`;
-    if (typeof (object.column) != 'number') throw `column property is not a number`;
+    const objectPropertiesCount = Object.keys(object).length;
 
-    return object as ClientPacket;
+    // do checking here
+    switch (object.type) {
+      case ClientPacketType.Field: {
+        const correctPropertiesCount = 3;
+
+        if (objectPropertiesCount != correctPropertiesCount) {
+          throw `Object has ${objectPropertiesCount} properties instead of ${correctPropertiesCount}`;
+        }
+
+        if (typeof (object.row) != 'number') throw `row property is not a number`;
+        if (typeof (object.column) != 'number') throw `column property is not a number`;
+
+        break;
+      }
+    }
+
+    return object;
   }
-}
-
-interface ClientPacket {
-  row: number;
-  column: number;
 }

@@ -1,16 +1,14 @@
-import MapController from './MapController';
+import Map from "./Map";
+import PacketHandler from "./PacketHandler";
 
 export default class Main {
   private appWrapper: HTMLDivElement;
-  private mapWrapper: HTMLDivElement;
-  private timerWrapper: HTMLDivElement;
   private errorWrapper: HTMLDivElement;
-  private mapController: MapController;
+  private packetHandler: PacketHandler;
+  public map: Map;
 
   constructor() {
     this.appWrapper = document.querySelector('#app');
-    this.mapWrapper = document.querySelector('#map');
-    this.timerWrapper = document.querySelector('#timer');
     this.errorWrapper = document.querySelector('.connection-error');
 
     this.start();
@@ -18,8 +16,12 @@ export default class Main {
 
   private async start(): Promise<void> {
     try {
-      await this.connect();
-      this.init();
+      const webSocket = await this.connect();
+      this.packetHandler = new PacketHandler(this, webSocket);
+      this.map = new Map(this.packetHandler, 15, 15);
+      this.packetHandler.listenForMessages();
+      this.map.render();
+      this.map.create();
     }
     catch {
       this.appWrapper.style.display = 'none';
@@ -27,23 +29,17 @@ export default class Main {
     }
   }
 
-  private connect(): Promise<void> {
+  private connect(): Promise<WebSocket> {
     return new Promise((resolve, reject) => {
       const webSocket = new WebSocket('ws://localhost:3000/Minesweeper');
-
+      
       webSocket.addEventListener('error', () => {
         reject();
       });
-
+      
       webSocket.addEventListener('open', () => {
-        resolve();
+        resolve(webSocket);
       });
     });
-  }
-
-  private init(): void {
-    this.mapController = new MapController(this.mapWrapper, this.timerWrapper);
-    this.mapController.create();
-    this.mapController.createMap();
   }
 }

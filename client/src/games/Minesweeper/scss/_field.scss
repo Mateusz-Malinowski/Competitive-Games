@@ -17,16 +17,16 @@
 }
 
 .empty,
-.bomb,
+.mine,
 .number {
     background-color: $field-revealed-color;
 }
 
-.bomb {
-    background-image: url(../assets/bomb.png);
+.mine {
+    background-image: url(../assets/mine.png);
 
     &.clicked {
-        background-color: $clicked-bomb-color;
+        background-color: $clicked-mine-color;
     }
 }
 
@@ -41,7 +41,7 @@
     background-image: url(../assets/flag.png);
 }
 
-.flag, .bomb {
+.flag, .mine {
     background-size: contain;
     background-repeat: no-repeat;
 }

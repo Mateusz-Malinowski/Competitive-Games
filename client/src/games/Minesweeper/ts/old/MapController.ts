@@ -4,7 +4,10 @@ import Settings from "./Settings.js";
 import Timer from "./Timer.js";
 
 export default class MapController {
-  constructor(mapWrapper, timerWrapper) {
+  private mapWrapper: HTMLDivElement;
+  private timerWrapper: HTMLDivElement;
+
+  constructor(mapWrapper: HTMLDivElement, timerWrapper: HTMLDivElement) {
     this.mapWrapper = mapWrapper;
     this.timerWrapper = timerWrapper;
 
