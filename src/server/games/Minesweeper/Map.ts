@@ -2,11 +2,14 @@ import Timer from "../../Timer";
 import { getRandomInt } from "../../../global/utilities";
 import Field from "./Field";
 import { FieldState } from "../../../global/games/Minesweeper/FieldState";
-import PacketHandler from "./PacketHandler";
 import FieldPacket from "../../../global/games/Minesweeper/packets/server/FieldPacket";
+import GameOverPacket from "../../../global/games/Minesweeper/packets/server/GameOverPacket";
+import GameWonPacket from "../../../global/games/Minesweeper/packets/server/GameWonPacket";
+import Player from "./Player";
+import { PlayerState } from "./PlayerState";
 
 export default class Map {
-  private packetHandler: PacketHandler;
+  private player: Player;
   private numberOfRows: number;
   private numberOfColumns: number;
   private numberOfMines: number;
@@ -14,8 +17,8 @@ export default class Map {
 
   private fields: Array<Array<Field>> = [];
 
-  constructor(packetHandler: PacketHandler, numberOfRows: number, numberOfColumns: number, numberOfMines: number) {
-    this.packetHandler = packetHandler;
+  constructor(player: Player, numberOfRows: number, numberOfColumns: number, numberOfMines: number) {
+    this.player = player;
     this.numberOfRows = numberOfRows;
     this.numberOfColumns = numberOfColumns;
     this.numberOfMines = numberOfMines;
@@ -31,16 +34,17 @@ export default class Map {
     switch (field.state) {
       case FieldState.Mine: {
         this.sendFieldPacket(row, column, true);
-        this.sendAllRemaining();
         this.gameOver();
         break;
       }
       case FieldState.Number: {
         this.sendFieldPacket(row, column);
+        if (this.gameIsFinished()) this.gameWon();
         break;
       }
       case FieldState.Empty: {
         this.sendNearEmptyFields(row, column);
+        if (this.gameIsFinished()) this.gameWon();
         break;
       }
     }
@@ -55,9 +59,10 @@ export default class Map {
     field.isFirst = true;
 
     this.generate();
-    this.timer.start();
 
     this.handleInput(firstFieldRow, firstFieldColumn);
+
+    this.timer.start();
   }
 
   private init(): void {
@@ -142,7 +147,7 @@ export default class Map {
       fieldPacket.clicked = true;
     }
 
-    this.packetHandler.sendPacket(fieldPacket);
+    this.player.packetHandler.sendPacket(fieldPacket);
   }
 
   private sendNearEmptyFields(row: number, column: number): void {
@@ -180,12 +185,44 @@ export default class Map {
     }
   }
 
+  private endGame(): void {
+    this.timer.stop();
+    this.player.state = PlayerState.Finished;
+    this.sendAllRemaining();
+  }
+
   private gameOver(): void {
-    
+    this.endGame();
+
+    const time = this.timer.getString();
+    const gameOverPacket = new GameOverPacket(time);
+    this.player.packetHandler.sendPacket(gameOverPacket);
+  }
+
+  private gameWon(): void {
+    this.endGame();
+
+    const time = this.timer.getString();
+    const gameWonPacket = new GameWonPacket(time);
+    this.player.packetHandler.sendPacket(gameWonPacket);
   }
 
   private rowAndColumnExists(row: number, column: number): Boolean {
     if (row < 0 || column < 0 || row >= this.numberOfRows || column >= this.numberOfColumns) return false;
+
+    return true;
+  }
+
+  private gameIsFinished(): Boolean {
+    for (let i = 0; i < this.numberOfRows; i++) {
+      for (let j = 0; j < this.numberOfColumns; j++) {
+        const field = this.fields[i][j];
+
+        const fieldShouldBeRevealed = field.state == FieldState.Empty || field.state == FieldState.Number;
+
+        if (fieldShouldBeRevealed && !field.isRevealed) return false;
+      }
+    }
 
     return true;
   }

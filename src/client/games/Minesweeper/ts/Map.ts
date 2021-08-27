@@ -1,13 +1,15 @@
 import Field from "./Field";
 import PacketHandler from "./PacketHandler";
 import FieldPacket from "../../../../global/games/Minesweeper/packets/server/FieldPacket";
+import Timer from "./Timer";
 
 export default class Map {
   private element: HTMLDivElement = document.querySelector('#map');
-  private packetHandler: PacketHandler;
+  public packetHandler: PacketHandler;
   private numberOfRows: number;
   private numberOfColumns: number;
   private fields: Array<Array<Field>>;
+  public timer: Timer = new Timer();
 
   constructor(packetHandler: PacketHandler, numberOfRows: number, numberOfColumns: number) {
     this.packetHandler = packetHandler;
@@ -18,6 +20,7 @@ export default class Map {
   public render(): void {
     this.init();
     this.adjustFields();
+    this.timer.reset();
 
     for (let i = 0; i < this.numberOfRows; i++) {
       for (let j = 0; j < this.numberOfColumns; j++) {
@@ -29,7 +32,7 @@ export default class Map {
     }
   }
 
-  public handleFieldPacket(packet: FieldPacket): void {
+  public revealFieldFromPacket(packet: FieldPacket): void {
     const field = this.fields[packet.row][packet.column];
     field.reveal(packet.state, packet.number);
 
@@ -56,7 +59,7 @@ export default class Map {
 
     for (let i = 0; i < this.numberOfRows; i++) {
       for (let j = 0; j < this.numberOfColumns; j++) {
-        this.fields[i][j] = new Field(this.packetHandler, i, j);
+        this.fields[i][j] = new Field(this, i, j);
       }
     }
   }

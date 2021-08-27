@@ -1,20 +1,26 @@
-import { padNumber } from "../global/utilities";
+import { padNumber } from "../../../../global/utilities";
 
 export default class Timer {
+  private element: HTMLDivElement = document.querySelector('#timer');
   private startTime: number;
   private interval: NodeJS.Timer;
   private miliseconds: number = 0;
   private seconds: number = 0;
   private minutes: number = 0;
   private hours: number = 0;
+  public isTicking: Boolean = false;
 
   public start(): void {
     this.startTime = Date.now();
     this.interval = setInterval(this.tick, 1);
+
+    this.isTicking = true;
   }
 
   public stop(): void {
     clearInterval(this.interval);
+
+    this.isTicking = false;
   }
 
   public reset(): void {
@@ -22,6 +28,8 @@ export default class Timer {
     this.seconds = 0;
     this.minutes = 0;
     this.hours = 0;
+
+    this.updateElement();
   }
 
   public getString(): string {
@@ -43,5 +51,11 @@ export default class Timer {
     this.seconds = totalSeconds % 60;
     this.minutes = totalMinutes % 60;
     this.hours = totalHours % 60;
+
+    this.updateElement();
+  }
+
+  private updateElement(): void {
+    this.element.innerText = this.getString();
   }
 }

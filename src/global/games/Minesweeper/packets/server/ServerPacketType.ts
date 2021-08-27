@@ -1,4 +1,5 @@
 export enum ServerPacketType {
   Field,
-  GameOver
+  GameOver,
+  GameWon
 }

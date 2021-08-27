@@ -1,16 +1,17 @@
 import { FieldState } from "../../../../global/games/Minesweeper/FieldState";
 import PacketHandler from "./PacketHandler";
 import FieldPacket from "../../../../global/games/Minesweeper/packets/client/FieldPacket";
+import Map from "./Map";
 
 export default class Field {
   public element: HTMLDivElement;
-  private packetHandler: PacketHandler;
+  private map: Map;
   private row: number;
   private column: number;
   private hasFlag: Boolean = false;
 
-  constructor(packetHandler: PacketHandler, row: number, column: number) {
-    this.packetHandler = packetHandler;
+  constructor(map: Map, row: number, column: number) {
+    this.map = map;
     this.row = row;
     this.column = column;
 
@@ -32,8 +33,7 @@ export default class Field {
 
   private handleClick = (): void => {
     const fieldPacket = new FieldPacket(this.row, this.column);
-
-    this.packetHandler.sendPacket(fieldPacket);
+    this.map.packetHandler.sendPacket(fieldPacket);
   }
 
   private handleContextMenu = (event: Event): void => {

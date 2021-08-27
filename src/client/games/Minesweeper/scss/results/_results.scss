@@ -31,16 +31,16 @@
                 color: $results-win-text-color;
             }
 
-            &.fail {
-                color: $results-fail-text-color;
+            &.defeat {
+                color: $results-defeat-text-color;
             }
         }
 
-        .timer-info-results {
+        .time-info-results {
             font-size: 1.25em;
         }
 
-        .timer-results {
+        .time-results {
             font-family: monospace;
             font-size: 1.5em;
             margin-bottom: 20px;
