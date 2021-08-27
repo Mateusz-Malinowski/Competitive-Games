@@ -1,2 +1,2 @@
-# Minesweeper
-Minesweeper
+# Web Games
+Web Games
