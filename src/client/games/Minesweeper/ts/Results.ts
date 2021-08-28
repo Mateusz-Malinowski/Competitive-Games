@@ -1,15 +1,15 @@
-import Map from './Map';
+import GameModes from './GameModes';
 
 export default class Results {
   private element: HTMLDivElement = document.querySelector('.results-overlay');
   private infoWrapper: HTMLDivElement = this.element.querySelector('.info-results');
   private timeWrapper: HTMLHeadingElement = this.element.querySelector('.time-results');
   private playButton: HTMLDivElement = this.element.querySelector('.button-results.play');
-  private map: Map;
+  private gameMode: GameModes;
   private time: string;
 
-  constructor(map: Map, time: string) {
-    this.map = map;
+  constructor(gameMode: GameModes, time: string) {
+    this.gameMode = gameMode;
     this.time = time;
   }
 
@@ -39,7 +39,7 @@ export default class Results {
   }
 
   private handlePlayClick = (): void => {
-    this.map.render();
+    this.gameMode.display();
     this.hide();
   }
 

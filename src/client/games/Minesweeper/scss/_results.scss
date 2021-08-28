@@ -1,4 +1,4 @@
-@import 'results-button';
+@import 'mixins/basic-button';
 
 .results-overlay {
     display: flex;
@@ -48,7 +48,7 @@
 
         .button-results {
             @extend .button;
-            @include resultsButton(light);
+            @include basicButton(light);
             text-shadow: none;
         }
     }

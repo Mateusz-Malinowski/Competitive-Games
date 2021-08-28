@@ -24,9 +24,13 @@ export default class Map {
     this.numberOfMines = numberOfMines;
   }
 
-  public handleInput(row: number, column: number): void {
-    if (!this.rowAndColumnExists(row, column)) return;
+  public rowAndColumnExists(row: number, column: number): Boolean {
+    if (row < 0 || column < 0 || row >= this.numberOfRows || column >= this.numberOfColumns) return false;
 
+    return true;
+  }
+
+  public handleInput(row: number, column: number): void {
     const field = this.fields[row][column];
 
     if (field.isRevealed) return;
@@ -51,14 +55,14 @@ export default class Map {
   }
 
   public startGame(firstFieldRow: number, firstFieldColumn: number): void {
-    if (!this.rowAndColumnExists(firstFieldRow, firstFieldColumn)) return;
-
     this.init();
 
     const field = this.fields[firstFieldRow][firstFieldColumn];
     field.isFirst = true;
 
     this.generate();
+
+    this.player.state = PlayerState.Playing;
 
     this.handleInput(firstFieldRow, firstFieldColumn);
 
@@ -205,12 +209,6 @@ export default class Map {
     const time = this.timer.getString();
     const gameWonPacket = new GameWonPacket(time);
     this.player.packetHandler.sendPacket(gameWonPacket);
-  }
-
-  private rowAndColumnExists(row: number, column: number): Boolean {
-    if (row < 0 || column < 0 || row >= this.numberOfRows || column >= this.numberOfColumns) return false;
-
-    return true;
   }
 
   private gameIsFinished(): Boolean {

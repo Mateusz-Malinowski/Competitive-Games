@@ -48,7 +48,7 @@ export default class PacketHandler {
   private handleGameOverPacket(packet: GameOverPacket): void {
     this.main.map.timer.stop();
     const displayDelay = 2500;
-    const results = new Results(this.main.map, packet.time);
+    const results = new Results(this.main.gameModes, packet.time);
 
     setTimeout(() => {
       results.display(false);
@@ -58,7 +58,7 @@ export default class PacketHandler {
   private handleGameWonPacket(packet: GameWonPacket): void {
     this.main.map.timer.stop();
     const displayDelay = 2500;
-    const results = new Results(this.main.map, packet.time);
+    const results = new Results(this.main.gameModes, packet.time);
 
     setTimeout(() => {
       results.display(true);

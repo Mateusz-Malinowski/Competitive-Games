@@ -1,6 +1,8 @@
 import Field from "./Field";
 import PacketHandler from "./PacketHandler";
 import FieldPacket from "../../../../global/games/Minesweeper/packets/server/FieldPacket";
+import StartGamePacket from "../../../../global/games/Minesweeper/packets/client/StartGamePacket";
+import gameModes from "../../../../global/games/Minesweeper/gameModes.json";
 import Timer from "./Timer";
 
 export default class Map {
@@ -11,25 +13,22 @@ export default class Map {
   private fields: Array<Array<Field>>;
   public timer: Timer = new Timer();
 
-  constructor(packetHandler: PacketHandler, numberOfRows: number, numberOfColumns: number) {
+  constructor(packetHandler: PacketHandler) {
     this.packetHandler = packetHandler;
-    this.numberOfRows = numberOfRows;
-    this.numberOfColumns = numberOfColumns;
   }
 
-  public render(): void {
-    this.init();
-    this.adjustFields();
+  public startGame(gameModeIndex: number): void {
+    const gameMode = gameModes[gameModeIndex];
+
+    this.numberOfRows = gameMode.numberOfRows;
+    this.numberOfColumns = gameMode.numberOfColumns;
+
     this.timer.reset();
 
-    for (let i = 0; i < this.numberOfRows; i++) {
-      for (let j = 0; j < this.numberOfColumns; j++) {
-        const field = this.fields[i][j];
+    const startGamePacket = new StartGamePacket(gameModeIndex);
+    this.packetHandler.sendPacket(startGamePacket);
 
-        this.element.appendChild(field.element);
-        field.create();
-      }
-    }
+    this.render();
   }
 
   public revealFieldFromPacket(packet: FieldPacket): void {
@@ -47,6 +46,20 @@ export default class Map {
 
   public destroy(): void {
     window.removeEventListener('resize', this.adjustFields);
+  }
+
+  private render(): void {
+    this.init();
+    this.adjustFields();
+
+    for (let i = 0; i < this.numberOfRows; i++) {
+      for (let j = 0; j < this.numberOfColumns; j++) {
+        const field = this.fields[i][j];
+
+        this.element.appendChild(field.element);
+        field.create();
+      }
+    }
   }
 
   private init() {

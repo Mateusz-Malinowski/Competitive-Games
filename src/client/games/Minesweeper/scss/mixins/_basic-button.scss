@@ -1,4 +1,4 @@
-@mixin resultsButton($theme) {
+@mixin basicButton($theme) {
     $button-color: null; $text-color: null;
 
     @if $theme == light {
@@ -10,7 +10,7 @@
         $text-color: $text-color-light;
     }
 
-    padding: 5px 10px;
+    padding: 10px;
     background-color: $button-color;
     color: $text-color;
     font-size: 1.25em;

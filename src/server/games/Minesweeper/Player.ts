@@ -8,7 +8,7 @@ import { PlayerState } from "./PlayerState";
 export default class Player extends ServerPlayer {
   public packetHandler: PacketHandler = new PacketHandler(this);
   public map: Map;
-  public state: PlayerState = PlayerState.Waiting;
+  public state: PlayerState;
 
   constructor(gameServer: GameServer, webSocket: WebSocket, ip: string) {
     super(gameServer, webSocket, ip);

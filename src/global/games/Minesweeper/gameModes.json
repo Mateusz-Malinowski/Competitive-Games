@@ -1,0 +1,17 @@
+[
+    {
+        "numberOfRows": 15,
+        "numberOfColumns": 15,
+        "numberOfMines": 15
+    },
+    {
+        "numberOfRows": 20,
+        "numberOfColumns": 20,
+        "numberOfMines": 20
+    },
+    {
+        "numberOfRows": 25,
+        "numberOfColumns": 25,
+        "numberOfMines": 25
+    }
+]
