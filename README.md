@@ -1,2 +1,2 @@
-# Web Games
-Web Games
+# Competitive Games
+Competitive Games
