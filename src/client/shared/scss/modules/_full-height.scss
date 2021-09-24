@@ -1,0 +1,5 @@
+@use '../variables/measurements';
+
+.full-height {
+    height: calc(100vh - #{measurements.$navbar-height + 2 * measurements.$page-spacing});
+}

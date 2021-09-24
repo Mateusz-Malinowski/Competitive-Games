@@ -20,10 +20,6 @@ class App {
       res.sendFile(path.join(this.staticDir, 'main/index.html'));
     });
 
-    router.get('/Minesweeper', (req, res) => {
-      res.sendFile(path.join(this.staticDir, 'games/Minesweeper/index.html'));
-    });
-
     this.express.use('/', router);
 
     this.express.use((req, res) => {

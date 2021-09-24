@@ -8,9 +8,9 @@ export default class FieldPacket extends ServerPacket {
   public column: number;
   public state: FieldState;
   public number?: number; // for FieldState.Number
-  public clicked?: Boolean; // for FieldState.Mine
+  public clicked?: boolean; // for FieldState.Mine
 
-  constructor(row: number, column: number, state: FieldState, number?: number, clicked?: Boolean) {
+  constructor(row: number, column: number, state: FieldState, number?: number, clicked?: boolean) {
     super();
 
     this.row = row;

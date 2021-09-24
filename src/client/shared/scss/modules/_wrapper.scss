@@ -1,0 +1,5 @@
+@use '../variables/measurements';
+
+.wrapper {
+    margin: measurements.$page-spacing;
+}

@@ -1,0 +1,10 @@
+@use '../variables/colors';
+@use '../variables/measurements';
+@use '../variables/shadows';
+
+.content-block {
+    background-color: colors.$primary;
+    padding: measurements.$page-spacing;
+    border-radius: measurements.$border-radius;
+    box-shadow: shadows.$content-block;
+}

@@ -40,3 +40,16 @@ export function getRandomInt(min: number, max: number): number {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
+
+export function initialize2dArray<T>(initValue: T, numberOfRows: number, numberOfColumns: number): T[][] {
+  const array: T[][] = [];
+
+  for (let i = 0; i < numberOfRows; i++) {
+    array.push([]);
+    for (let j = 0; j < numberOfColumns; j++) {
+      array[i][j] = initValue;
+    }
+  }
+
+  return array;
+}
