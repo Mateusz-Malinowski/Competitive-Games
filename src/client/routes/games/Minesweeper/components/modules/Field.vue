@@ -68,11 +68,7 @@ export default defineComponent({
     };
 
     const handleClick = (): void => {
-      const fieldPacket: FieldPacket = {
-        type: ClientPacketType.Field,
-        row: props.row,
-        column: props.column,
-      };
+      const fieldPacket = new FieldPacket(props.row, props.column);
       WebSocketController.sendPacket(fieldPacket);
     };
 

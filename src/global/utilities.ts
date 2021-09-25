@@ -1,4 +1,4 @@
-export function padNumber(number: string | number, length: number) {
+export function padNumber(number: string | number, length: number): string {
   let string = number.toString();
 
   while (string.length < length) {
@@ -8,7 +8,25 @@ export function padNumber(number: string | number, length: number) {
   return string;
 }
 
-export function getCurrentDateString(date: Date) {
+export function getTimeString(totalMiliseconds: number): string {
+  const totalSeconds = Math.floor(totalMiliseconds / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+
+  const miliseconds = totalMiliseconds % 1000;
+  const seconds = totalSeconds % 60;
+  const minutes = totalMinutes % 60;
+  const hours = totalHours % 60;
+
+  const milisecondsString = padNumber(miliseconds, 3);
+  const secondsString = padNumber(seconds, 2);
+  const minutesString = padNumber(minutes, 2);
+  const hoursString = padNumber(hours, 2);
+
+  return `${hoursString}:${minutesString}:${secondsString}.${milisecondsString}`;
+}
+
+export function getCurrentDateString(date: Date): string {
   const day = padNumber(date.getDate(), 2);
   const month = padNumber(date.getMonth() + 1, 2);
   const year = date.getFullYear();
@@ -16,7 +34,7 @@ export function getCurrentDateString(date: Date) {
   return `${year}.${month}.${day}`;
 }
 
-export function getCurrentTimeString(date: Date) {
+export function getCurrentTimeString(date: Date): string {
   const hours = padNumber(date.getHours(), 2);
   const minutes = padNumber(date.getMinutes(), 2);
   const seconds = padNumber(date.getSeconds(), 2);
@@ -24,7 +42,7 @@ export function getCurrentTimeString(date: Date) {
   return `${hours}:${minutes}:${seconds}`;
 }
 
-export function removeElementFromArray<T>(array: Array<T>, element: T) {
+export function removeElementFromArray<T>(array: Array<T>, element: T): void {
   const index = array.indexOf(element);
   array.splice(index, 1);
 }

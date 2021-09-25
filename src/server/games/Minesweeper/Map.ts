@@ -198,7 +198,7 @@ export default class Map {
   private gameOver(): void {
     this.endGame();
 
-    const time = this.timer.getString();
+    const time = this.timer.getTotalMiliseconds();
     const gameOverPacket = new GameOverPacket(time);
     this.player.packetHandler.sendPacket(gameOverPacket);
   }
@@ -206,7 +206,7 @@ export default class Map {
   private gameWon(): void {
     this.endGame();
 
-    const time = this.timer.getString();
+    const time = this.timer.getTotalMiliseconds();
     const gameWonPacket = new GameWonPacket(time);
     this.player.packetHandler.sendPacket(gameWonPacket);
   }

@@ -1,12 +1,9 @@
-import { padNumber } from "../global/utilities";
+import { getTimeString } from "../global/utilities";
 
 export default class Timer {
   private startTime: number;
+  private currentTime: number;
   private interval: NodeJS.Timer;
-  private miliseconds: number = 0;
-  private seconds: number = 0;
-  private minutes: number = 0;
-  private hours: number = 0;
 
   public start(): void {
     this.startTime = Date.now();
@@ -18,30 +15,19 @@ export default class Timer {
   }
 
   public reset(): void {
-    this.miliseconds = 0;
-    this.seconds = 0;
-    this.minutes = 0;
-    this.hours = 0;
+    this.startTime = this.currentTime;
   }
 
   public getString(): string {
-    const milisecondsString = padNumber(this.miliseconds, 3);
-    const secondsString = padNumber(this.seconds, 2);
-    const minutesString = padNumber(this.minutes, 2);
-    const hoursString = padNumber(this.hours, 2);
+    const totalMiliseconds = this.getTotalMiliseconds();
+    return getTimeString(totalMiliseconds);
+  }
 
-    return `${hoursString}:${minutesString}:${secondsString}.${milisecondsString}`
+  public getTotalMiliseconds(): number {
+    return this.currentTime - this.startTime;
   }
 
   private tick = (): void => {
-    const totalMiliseconds = Date.now() - this.startTime;
-    const totalSeconds = Math.floor(totalMiliseconds / 1000);
-    const totalMinutes = Math.floor(totalSeconds / 60);
-    const totalHours = Math.floor(totalMinutes / 60);
-
-    this.miliseconds = totalMiliseconds % 1000;
-    this.seconds = totalSeconds % 60;
-    this.minutes = totalMinutes % 60;
-    this.hours = totalHours % 60;
+    this.currentTime = Date.now();
   }
 }
