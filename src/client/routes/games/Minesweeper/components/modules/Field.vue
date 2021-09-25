@@ -1,15 +1,24 @@
 <template>
   <div
     class="field"
-    :class="[{ active: isActive }, contentClass]"
-    @click.once="handleClick"
-  ></div>
+    :class="[{ active: isActive }, { flag: hasFlag && !contentClass }, contentClass]"
+    v-on="{
+      click: isActive ? handleClick : null,
+      contextmenu: isActive ? handleContextMenu : null,
+    }"
+  >
+    <span v-if="fieldNumber">{{ fieldNumber }}</span>
+  </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { FieldState } from "../../../../../../global/games/Minesweeper/FieldState";
+import { ClientPacketType } from "../../../../../../global/games/Minesweeper/packets/client/ClientPacketType";
+import FieldPacket from "../../../../../../global/games/Minesweeper/packets/client/FieldPacket";
+import WebSocketController from "../../api/WebSocketController";
 import { useStore } from "../../store";
+import { FieldData } from "../../store/modules/map";
 
 type ContentClass = "" | "empty" | "mine" | "mine clicked" | `number-${number}`;
 
@@ -26,27 +35,55 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    const isActive = ref<boolean>(true);
-    const contentClass = computed<ContentClass>(() => {
-      const fieldData = store.state.map.fieldData[props.row][props.column];
+    const fieldData = computed<FieldData>(
+      () => store.state.map.fieldData[props.row][props.column]
+    );
 
-      switch (fieldData.state) {
+    const isActive = computed<boolean>(
+      () => fieldData.value.state == FieldState.None
+    );
+    const fieldNumber = computed<number | undefined>(
+      () => fieldData.value.number
+    );
+    const contentClass = computed<ContentClass>(() => {
+      switch (fieldData.value.state) {
         case FieldState.None:
           return "";
         case FieldState.Empty:
           return "empty";
         case FieldState.Mine:
-          return `mine${fieldData.clicked ? " clicked" : ""}`;
+          return `mine${fieldData.value.clicked ? " clicked" : ""}`;
         case FieldState.Number:
-          return `number-${fieldData.number as number}`;
+          return `number-${fieldData.value.number as number}`;
       }
     });
 
-    const handleClick = () => {
-      isActive.value = false;
+    const hasFlag = ref<boolean>(false);
+    const toggleFlag = (): void => {
+      hasFlag.value = !hasFlag.value;
+    };
+    const handleContextMenu = (event: Event) => {
+      event.preventDefault();
+      toggleFlag();
     };
 
-    return { isActive, contentClass, handleClick };
+    const handleClick = (): void => {
+      const fieldPacket: FieldPacket = {
+        type: ClientPacketType.Field,
+        row: props.row,
+        column: props.column,
+      };
+      WebSocketController.sendPacket(fieldPacket);
+    };
+
+    return {
+      isActive,
+      fieldNumber,
+      contentClass,
+      hasFlag,
+      handleContextMenu,
+      handleClick,
+    };
   },
 });
 </script>
@@ -60,7 +97,6 @@ $number-colors: rgb(0, 0, 0), rgb(255, 255, 255), rgb(0, 255, 255),
   rgb(255, 0, 0);
 
 .field {
-  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;

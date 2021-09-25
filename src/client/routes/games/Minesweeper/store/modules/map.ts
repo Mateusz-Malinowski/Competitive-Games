@@ -4,7 +4,7 @@ import { FieldState } from '../../../../../../global/games/Minesweeper/FieldStat
 import { initialize2dArray } from '../../../../../../global/utilities';
 import FieldPacket from '../../../../../../global/games/Minesweeper/packets/server/FieldPacket';
 
-interface FieldData {
+export interface FieldData {
   state: FieldState;
   number?: number;
   clicked?: boolean;
@@ -19,9 +19,9 @@ export interface MapState {
 export default {
   namespaced: true,
   state: (): MapState => ({
-    numberOfRows: 10,
-    numberOfColumns: 10,
-    fieldData: initialize2dArray({ state: FieldState.None }, 10, 10)
+    numberOfRows: 15,
+    numberOfColumns: 15,
+    fieldData: initialize2dArray({ state: FieldState.None }, 15, 15)
   }),
   mutations: {
     updateFieldData(state: MapState, fieldPacket: FieldPacket): void {
@@ -32,10 +32,4 @@ export default {
       }
     }
   },
-  actions: {
-    updateFieldData({ commit }: ActionContext<MapState, RootState>): Promise<void> {
-      return new Promise((resolve, reject) => {
-      });
-    }
-  }
 }
