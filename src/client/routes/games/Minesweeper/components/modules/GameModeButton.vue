@@ -1,12 +1,10 @@
 <template>
-  <div class="game-mode">
-    <AnimatedButton @click="startGame(id)">
-      <div class="game-mode-info">
-        <span>{{ numberOfColumns }}x{{ numberOfRows }}</span>
-        <span>{{ numberOfMines }} mines</span>
-      </div>
-    </AnimatedButton>
-  </div>
+  <AnimatedButton @click="startGame(id)">
+    <div class="game-mode-properties">
+      <span>{{ numberOfColumns }}x{{ numberOfRows }}</span>
+      <span>{{ numberOfMines }} mines</span>
+    </div>
+  </AnimatedButton>
 </template>
 
 <script lang="ts">
@@ -56,7 +54,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.game-mode-info {
+.game-mode-properties {
   display: flex;
   flex-direction: column;
   align-items: center;

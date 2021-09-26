@@ -59,8 +59,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../shared/scss/modules/noselect';
-
 $border-color: rgb(180, 180, 180);
 
 .map {
@@ -69,8 +67,6 @@ $border-color: rgb(180, 180, 180);
   height: 100%;
   flex-direction: column;
   border: 1px solid $border-color;
-
-  @extend %noselect;
 
   .row {
     display: flex;

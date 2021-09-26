@@ -1,9 +1,9 @@
 <template>
   <div class="game-modes">
     <h2>Choose game mode</h2>
-    <div class="game-modes-links">
-      <GameMode
-        class="game-mode"
+    <div class="game-mode-buttons">
+      <GameModeButton
+        class="game-mode-button"
         v-for="(gameMode, index) in gameModes"
         :key="index"
         :id="index"
@@ -12,12 +12,19 @@
         :numberOfMines="gameMode.numberOfMines"
       />
     </div>
+    <div class="game-mode-info">
+      <!-- todo (on game mode button hover):
+      world record
+      personal best
+      average personal best
+      completition % -->
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import GameMode from "./GameMode.vue";
+import GameModeButton from "./GameModeButton.vue";
 import gameModesJSON from "../../../../../../global/games/Minesweeper/gameModes.json";
 
 interface GameModes {
@@ -27,7 +34,7 @@ interface GameModes {
 }
 
 export default defineComponent({
-  components: { GameMode },
+  components: { GameModeButton },
   setup() {
     const gameModes = ref<GameModes[]>(gameModesJSON);
 
@@ -52,11 +59,11 @@ h2 {
   margin-bottom: measurements.$page-spacing;
 }
 
-.game-modes-links {
+.game-mode-buttons {
   display: flex;
 }
 
-.game-mode {
+.game-mode-button {
   font-size: 1.25em;
   margin-left: measurements.$page-spacing;
 

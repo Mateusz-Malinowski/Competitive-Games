@@ -1,5 +1,5 @@
 <template>
-  <a class="button">
+  <a class="animated-button">
     <slot></slot>
   </a>
 </template>
@@ -18,7 +18,7 @@ export default defineComponent({
 @use '../scss/variables/shadows';
 @use '../scss/modules/button';
 
-.button {
+.animated-button {
   @extend %button;
   display: inline-flex;
   background-color: colors.$button;

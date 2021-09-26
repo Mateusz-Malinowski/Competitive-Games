@@ -1,33 +1,40 @@
 import { getTimeString } from "../global/utilities";
 
 export default class Timer {
+  private isTicking: boolean = false;
   private startTime: number;
-  private currentTime: number;
+  private totalMiliseconds: number = 0;
   private interval: NodeJS.Timer;
 
   public start(): void {
-    this.startTime = Date.now();
+    if (this.isTicking) return;
+
+    this.startTime = Date.now() - this.totalMiliseconds;
     this.interval = setInterval(this.tick, 1);
+    this.isTicking = true;
   }
 
   public stop(): void {
+    if (!this.isTicking) return;
+
     clearInterval(this.interval);
+    this.isTicking = false;
   }
 
   public reset(): void {
-    this.startTime = this.currentTime;
+    this.totalMiliseconds = 0;
+    this.startTime = Date.now();
   }
 
   public getString(): string {
-    const totalMiliseconds = this.getTotalMiliseconds();
-    return getTimeString(totalMiliseconds);
+    return getTimeString(this.totalMiliseconds);
   }
 
   public getTotalMiliseconds(): number {
-    return this.currentTime - this.startTime;
+    return this.totalMiliseconds;
   }
 
   private tick = (): void => {
-    this.currentTime = Date.now();
+    this.totalMiliseconds = Date.now() - this.startTime;
   }
 }

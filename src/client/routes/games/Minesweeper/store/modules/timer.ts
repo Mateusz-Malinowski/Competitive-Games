@@ -6,38 +6,35 @@ export interface TimerState {
   isTicking: boolean;
   interval: number | undefined;
   startTime: number;
-  currentTime: number;
+  totalMiliseconds: number;
 }
 
 const state = (): TimerState => ({
   isTicking: false,
   interval: undefined,
   startTime: 0,
-  currentTime: 0
+  totalMiliseconds: 0
 });
 
 const getters: GetterTree<TimerState, RootState> = {
-  getTotalMiliseconds(state: TimerState): number {
-    return state.currentTime - state.startTime;
-  },
-  getMiliseconds(state: TimerState, getters: any): string {
-    const miliseconds = Math.floor(getters.getTotalMiliseconds % 1000);
+  getMiliseconds(state: TimerState): string {
+    const miliseconds = Math.floor(state.totalMiliseconds % 1000);
     return padNumber(miliseconds, 3);
   },
-  getSeconds(state: TimerState, getters: any): string {
-    const seconds = Math.floor((getters.getTotalMiliseconds / 1000) % 60);
+  getSeconds(state: TimerState): string {
+    const seconds = Math.floor((state.totalMiliseconds / 1000) % 60);
     return padNumber(seconds, 2);
   },
-  getMinutes(state: TimerState, getters: any): string {
-    const minutes = Math.floor((getters.getTotalMiliseconds / 1000 / 60) % 60);
+  getMinutes(state: TimerState): string {
+    const minutes = Math.floor((state.totalMiliseconds / 1000 / 60) % 60);
     return padNumber(minutes, 2);
   },
-  getHours(state: TimerState, getters: any): string {
-    const hours = Math.floor((getters.getTotalMiliseconds / 1000 / 60 / 60) % 60);
+  getHours(state: TimerState): string {
+    const hours = Math.floor((state.totalMiliseconds / 1000 / 60 / 60) % 60);
     return padNumber(hours, 2);
   },
-  getTimeString(state: TimerState, getters: any): string {
-    return utilGetTimeString(getters.getTotalMiliseconds);
+  getTimeString(state: TimerState): string {
+    return utilGetTimeString(state.totalMiliseconds);
   }
 }
 
@@ -45,8 +42,8 @@ const mutations: MutationTree<TimerState> = {
   setStartTime(state: TimerState, time: number): void {
     state.startTime = time;
   },
-  setCurrentTime(state: TimerState, time: number): void {
-    state.currentTime = time;
+  setTotalMiliseconds(state: TimerState, time: number): void {
+    state.totalMiliseconds = time;
   },
   setIsTicking(state: TimerState, value: boolean): void {
     state.isTicking = value;
@@ -60,13 +57,13 @@ const actions: ActionTree<TimerState, RootState> = {
   start({ state, commit, dispatch }: ActionContext<TimerState, RootState>): void {
     if (state.isTicking) return;
 
+    const startTime = Date.now() - state.totalMiliseconds;
+    commit('setStartTime', startTime);
+    
     const interval = setInterval((): void => {
       dispatch('tick');
     }, 1);
 
-    const time = Date.now();
-    commit('setStartTime', time);
-    commit('setCurrentTime', time);
     commit('setInterval', interval);
     commit('setIsTicking', true);
   },
@@ -76,11 +73,12 @@ const actions: ActionTree<TimerState, RootState> = {
     clearInterval(state.interval);
     commit('setIsTicking', false);
   },
-  reset({ state, commit }: ActionContext<TimerState, RootState>): void {
-    commit('setStartTime', state.currentTime);
+  reset({ commit }: ActionContext<TimerState, RootState>): void {
+    commit('setTotalMiliseconds', 0);
+    commit('setStartTime', Date.now());
   },
-  tick({ commit }: ActionContext<TimerState, RootState>): void {
-    commit('setCurrentTime', Date.now());
+  tick({ state, commit }: ActionContext<TimerState, RootState>): void {
+    commit('setTotalMiliseconds', Date.now() - state.startTime);
   }
 }
 
