@@ -15,13 +15,23 @@ export interface MapState {
   fieldData: FieldData[][];
 }
 
+interface initializationData {
+  numberOfRows: number;
+  numberOfColumns: number;
+}
+
 const state = (): MapState => ({
-  numberOfRows: 15,
-  numberOfColumns: 15,
-  fieldData: initialize2dArray({ state: FieldState.None }, 15, 15)
+  numberOfRows: 0,
+  numberOfColumns: 0,
+  fieldData: []
 });
 
 const mutations: MutationTree<MapState> = {
+  initialize(state: MapState, { numberOfRows, numberOfColumns }: initializationData): void {
+    state.numberOfRows = numberOfRows;
+    state.numberOfColumns = numberOfColumns;
+    state.fieldData = initialize2dArray<FieldData>({ state: FieldState.None }, numberOfRows, numberOfColumns);
+  },
   updateFieldData(state: MapState, fieldPacket: FieldPacket): void {
     state.fieldData[fieldPacket.row][fieldPacket.column] = {
       state: fieldPacket.state,

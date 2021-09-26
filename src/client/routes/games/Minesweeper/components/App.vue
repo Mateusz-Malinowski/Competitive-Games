@@ -1,32 +1,37 @@
 <template>
   <Navbar />
   <div class="wrapper wrapper-map">
-    <div class="content-block content-map">
-      <Map />
+    <div class="content-block content-game">
+      <GameModes v-if="gameStatus == GameStatus.ChoosingGameMode" />
+      <Map v-if="gameStatus == GameStatus.Playing" />
     </div>
     <div class="content-block content-timer">
-      <Timer class="timer" />
+      <Timer />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import Navbar from "../../../../shared/components/Navbar.vue";
+import GameModes from './modules/GameModes.vue';
 import Map from "./modules/Map.vue";
 import Timer from "./modules/Timer.vue";
 
 import WebSocketController from "../api/WebSocketController";
-import StartGamePacket from "../../../../../global/games/Minesweeper/packets/client/StartGamePacket";
 import FieldPacket from "../../../../../global/games/Minesweeper/packets/server/FieldPacket";
 import { useStore } from "../store";
+import { GameStatus as GameStatusEnum } from "../store/modules/game";
 import GameOverPacket from "../../../../../global/games/Minesweeper/packets/server/GameOverPacket";
 import GameWonPacket from "../../../../../global/games/Minesweeper/packets/server/GameWonPacket";
 
 export default defineComponent({
-  components: { Navbar, Map, Timer },
+  components: { Navbar, Map, GameModes, Timer },
   setup() {
     const store = useStore();
+
+    const gameStatus = computed(() => store.state.game.gameStatus);
+    const GameStatus = GameStatusEnum;
 
     const stopAndCorrectTimer = (serverTime: number): void => {
       store.dispatch("timer/stop");
@@ -48,6 +53,8 @@ export default defineComponent({
     WebSocketController.handleGameWonPacket = (packet: GameWonPacket): void => {
       stopAndCorrectTimer(packet.time);
     };
+
+    return { gameStatus, GameStatus };
   },
   async mounted() {
     const webSocketController = new WebSocketController();
@@ -59,15 +66,13 @@ export default defineComponent({
     }
 
     webSocketController.listenForMessages();
-
-    const startGamePacket = new StartGamePacket(0);
-    WebSocketController.sendPacket(startGamePacket);
   },
 });
 </script>
 
 <style lang="scss" scoped>
 @use '../../../../shared/scss/variables/measurements';
+@use '../../../../shared/scss/mixins/devices';
 
 .wrapper-map {
   display: flex;
@@ -75,16 +80,33 @@ export default defineComponent({
   align-items: flex-start;
 }
 
-.content-map {
+.content-game {
   display: inline-flex;
+  
+  @include devices.phone {
+    width: 300px + measurements.$page-spacing;
+    height: 300px + measurements.$page-spacing;
+  }
+
+  @include devices.tablet {
+    width: 400px + measurements.$page-spacing;
+    height: 400px + measurements.$page-spacing;
+  }
+
+  @include devices.laptop {
+    width: 500px + measurements.$page-spacing;
+    height: 500px + measurements.$page-spacing;
+  }
+
+  @include devices.large-laptop {
+    width: 600px + measurements.$page-spacing;
+    height: 600px + measurements.$page-spacing;
+  }
 }
 
 .content-timer {
   display: inline-flex;
   margin-left: measurements.$page-spacing;
-}
-
-.timer {
   font-size: 3em;
 }
 </style>

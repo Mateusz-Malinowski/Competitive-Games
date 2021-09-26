@@ -1,5 +1,5 @@
 <template>
-  <a>
+  <a class="button">
     <slot></slot>
   </a>
 </template>
@@ -18,11 +18,12 @@ export default defineComponent({
 @use '../scss/variables/shadows';
 @use '../scss/modules/button';
 
-a {
+.button {
   @extend %button;
+  display: inline-flex;
   background-color: colors.$button;
   box-shadow: shadows.$button-base;
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 10px;
   transition-property: background-color, transform, box-shadow;
   transition-duration: 0.3s;

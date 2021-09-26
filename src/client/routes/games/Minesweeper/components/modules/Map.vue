@@ -59,37 +59,18 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../shared/scss/mixins/devices';
 @use '../../../../../shared/scss/modules/noselect';
 
 $border-color: rgb(180, 180, 180);
 
 .map {
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   border: 1px solid $border-color;
 
   @extend %noselect;
-
-  @include devices.phone {
-    width: 300px;
-    height: 300px;
-  }
-
-  @include devices.tablet {
-    width: 400px;
-    height: 400px;
-  }
-
-  @include devices.laptop {
-    width: 500px;
-    height: 500px;
-  }
-
-  @include devices.large-laptop {
-    width: 600px;
-    height: 600px;
-  }
 
   .row {
     display: flex;
