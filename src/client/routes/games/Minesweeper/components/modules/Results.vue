@@ -29,7 +29,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
 
-    const result = computed(() => store.state.game.gameResult);
+    const result = computed<GameResult>(() => store.state.game.gameResult);
 
     const tryAgain = (): void => {
       store.commit('game/setGameStatus', GameStatus.ChoosingGameMode);

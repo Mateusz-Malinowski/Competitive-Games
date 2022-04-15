@@ -88,8 +88,14 @@ export default defineComponent({
 
 .wrapper-minesweeper {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column-reverse;
+  align-items: center;
+
+  @include devices.desktop {
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
+  }
 
   @extend %noselect;
 }
@@ -113,15 +119,21 @@ export default defineComponent({
     height: 500px + measurements.$page-spacing * 2;
   }
 
-  @include devices.large-laptop {
-    width: 600px + measurements.$page-spacing * 2;
-    height: 600px + measurements.$page-spacing * 2;
+  @include devices.desktop {
+    width: 550px + measurements.$page-spacing * 2;
+    height: 550px + measurements.$page-spacing * 2;
   }
 }
 
 .content-timer {
   display: flex;
-  margin-left: measurements.$page-spacing;
+  margin-bottom: measurements.$page-spacing;
+
+  @include devices.desktop {
+    margin-left: measurements.$page-spacing;
+    margin-bottom: 0;
+  }
+
   font-size: 3em;
 }
 </style>

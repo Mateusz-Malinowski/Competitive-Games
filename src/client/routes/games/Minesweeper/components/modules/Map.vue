@@ -28,8 +28,8 @@ export default defineComponent({
   setup() {
     const store = useStore();
 
-    const numberOfRows = computed(() => store.state.map.numberOfRows);
-    const numberOfColumns = computed(() => store.state.map.numberOfColumns);
+    const numberOfRows = computed<number>(() => store.state.map.numberOfRows);
+    const numberOfColumns = computed<number>(() => store.state.map.numberOfColumns);
 
     const mapElement = ref<HTMLDivElement>();
 
