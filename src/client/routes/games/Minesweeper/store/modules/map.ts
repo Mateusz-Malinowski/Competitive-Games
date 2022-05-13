@@ -15,7 +15,7 @@ export interface MapState {
   fieldData: FieldData[][];
 }
 
-interface initializationData {
+interface InitializationData {
   numberOfRows: number;
   numberOfColumns: number;
 }
@@ -27,7 +27,7 @@ const state = (): MapState => ({
 });
 
 const mutations: MutationTree<MapState> = {
-  initialize(state: MapState, { numberOfRows, numberOfColumns }: initializationData): void {
+  initialize(state: MapState, { numberOfRows, numberOfColumns }: InitializationData): void {
     state.numberOfRows = numberOfRows;
     state.numberOfColumns = numberOfColumns;
     state.fieldData = initialize2dArray<FieldData>({ state: FieldState.None }, numberOfRows, numberOfColumns);
