@@ -57,6 +57,7 @@ export default defineComponent({
 @use "../scss/variables/shadows";
 @use "../scss/modules/button";
 @use "../scss/mixins/devices";
+@use 'sass:math';
 
 nav {
   display: flex;
@@ -72,7 +73,7 @@ nav {
     width: 100%;
     height: measurements.$navbar-height;
     background-color: colors.$navbar;
-    padding: 0 #{measurements.$page-spacing / 2};
+    padding: 0 #{math.div(measurements.$page-spacing, 2)};
     box-shadow: shadows.$navbar;
     border-bottom-left-radius: measurements.$border-radius;
     border-bottom-right-radius: measurements.$border-radius;
@@ -82,7 +83,7 @@ nav {
     }
 
     .logo {
-      margin-right: #{measurements.$page-spacing / 2};
+      margin-right: #{math.div(measurements.$page-spacing, 2)};
 
       img {
         height: 35px;
@@ -136,7 +137,7 @@ nav {
 
         @include devices.laptop {
           height: 100%;
-          padding: 0 #{measurements.$page-spacing / 2};
+          padding: 0 #{math.div(measurements.$page-spacing, 2)};
         }
       }
     }
