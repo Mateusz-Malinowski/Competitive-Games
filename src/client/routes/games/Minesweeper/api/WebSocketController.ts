@@ -6,7 +6,7 @@ import ClientPacket from "../../../../../global/games/Minesweeper/packets/client
 import { ServerPacketType } from "../../../../../global/games/Minesweeper/packets/server/ServerPacketType";
 
 export default class WebSocketController {
-  public static webSocket: WebSocket;
+  private static webSocket: WebSocket;
   public static handleFieldPacket: (packet: FieldPacket) => void;
   public static handleGameOverPacket: (packet: GameOverPacket) => void;
   public static handleGameWonPacket: (packet: GameWonPacket) => void;
