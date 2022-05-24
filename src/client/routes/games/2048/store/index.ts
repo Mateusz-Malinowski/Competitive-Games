@@ -1,8 +1,10 @@
 import { InjectionKey } from 'vue';
 import { createStore, ModuleTree, Store, useStore as vuexUseStore } from 'vuex';
 import board, { BoardState } from './modules/board';
+import game, { GameState } from './modules/game';
 
 export interface RootState {
+  game: GameState;
   board: BoardState;
 }
 
@@ -13,6 +15,7 @@ export function useStore(): Store<RootState> {
 }
 
 const modules: ModuleTree<RootState> = {
+  game,
   board
 }
 

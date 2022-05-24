@@ -51,6 +51,7 @@ export default class PacketHandler extends ServerPacketHandler {
     if (!this.player.map.rowAndColumnExists(packet.row, packet.column)) return;
 
     if (this.player.state === PlayerState.Waiting) {
+      this.player.state = PlayerState.Playing;
       this.player.map.startGame(packet.row, packet.column);
       return;
     }

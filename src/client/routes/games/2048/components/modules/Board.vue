@@ -11,17 +11,17 @@
       v-for="tile in tiles"
       :key="`${tile.row}${tile.column}`"
       :style="fieldStyles[tile.row][tile.column]"
+      :number="tile.number"
     />
   </div>
+  <KeyboardEvents @keyup="handleKeyUp" />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import { useStore } from "vuex";
-import NewTilePacket from "../../../../../../global/games/2048/packets/server/NewTilePacket";
-import { ServerPacketType } from "../../../../../../global/games/2048/packets/server/ServerPacketType";
+import { useStore } from "../../store";
 import { initialize2dArray } from "../../../../../../global/utilities";
-import { key } from "../../store";
+import KeyboardEvents from "../../../../../shared/components/KeyboardEvents.vue";
 import Field from "./Field.vue";
 import Tile from "./Tile.vue";
 
@@ -39,18 +39,9 @@ interface Tile {
 }
 
 export default defineComponent({
-  components: { Field, Tile },
+  components: { Field, Tile, KeyboardEvents },
   setup() {
-    const store = useStore(key);
-
-    store.commit('board/initialize', { numberOfRows: 4, numberOfColumns: 4 }); // todo: info from server ofc
-    const newTilePacket: NewTilePacket = {
-      type: ServerPacketType.NewTile,
-      row: 0,
-      column: 0,
-      number: 2
-    }
-    store.commit('board/addNewTile', newTilePacket);
+    const store = useStore();
 
     const borderWidthPx = 10;
     const numberOfRows = computed<number>(() => store.state.board.numberOfRows);
@@ -94,6 +85,19 @@ export default defineComponent({
       }
     };
 
+    const handleKeyUp = (keyName: string): void => {
+      switch (keyName) {
+        case 'ArrowUp':
+          break;
+        case 'ArrowRight':
+          break;
+        case 'ArrowDown':
+          break;
+        case 'ArrowLeft':
+          break;
+      }
+    }
+
     return {
       numberOfRows,
       numberOfColumns,
@@ -101,6 +105,7 @@ export default defineComponent({
       tiles,
       fieldStyles,
       adjustSize,
+      handleKeyUp,
     };
   },
   mounted() {

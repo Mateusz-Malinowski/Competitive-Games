@@ -62,8 +62,6 @@ export default class Map {
 
     this.generate();
 
-    this.player.state = PlayerState.Playing;
-
     this.handleInput(firstFieldRow, firstFieldColumn);
 
     this.timer.start();
