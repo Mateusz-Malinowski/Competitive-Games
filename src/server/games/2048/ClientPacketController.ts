@@ -21,6 +21,18 @@ export default class ClientPacketController {
 
         return object;
       }
+
+      case ClientPacketType.MoveTiles: {
+        const correctPropertiesCount = 2;
+
+        if (objectPropertiesCount !== correctPropertiesCount) {
+          throw `Object has ${objectPropertiesCount} properties instead of ${correctPropertiesCount}`;
+        }
+
+        if (typeof(object.direction) !== 'number') throw `direction property is not a number`;
+
+        return object;
+      }
     }
 
     throw `Packet type ${object.type} is not defined`;

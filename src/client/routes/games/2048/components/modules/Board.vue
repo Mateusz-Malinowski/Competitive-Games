@@ -21,9 +21,12 @@
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from "../../store";
 import { initialize2dArray } from "../../../../../../global/utilities";
+import MoveTilesPacket from "../../../../../../global/games/2048/packets/client/MoveTilesPacket";
 import KeyboardEvents from "../../../../../shared/components/KeyboardEvents.vue";
 import Field from "./Field.vue";
 import Tile from "./Tile.vue";
+import WebSocketController from "../../api/WebSocketController";
+import { Direction } from "../../../../../../global/games/2048/Direction";
 
 interface FieldStyle {
   width: string;
@@ -45,14 +48,16 @@ export default defineComponent({
 
     const borderWidthPx = 10;
     const numberOfRows = computed<number>(() => store.state.board.numberOfRows);
-    const numberOfColumns = computed<number>(() => store.state.board.numberOfColumns);
+    const numberOfColumns = computed<number>(
+      () => store.state.board.numberOfColumns
+    );
     const tiles = computed<Tile[]>(() => {
       const tiles: Tile[] = [];
       for (let i = 0; i < numberOfRows.value; i++) {
         for (let j = 0; j < numberOfColumns.value; j++) {
-          const number = store.state.board.fieldData[i][j];
-          if (number != 0)
-            tiles.push({ row: i, column: j, number: number });
+          const field = store.state.board.fields[i][j];
+          if (field.number !== 0)
+            tiles.push({ row: i, column: j, number: field.number });
         }
       }
       return tiles;
@@ -86,17 +91,31 @@ export default defineComponent({
     };
 
     const handleKeyUp = (keyName: string): void => {
+      let moveTilesPacket: MoveTilesPacket;
+
       switch (keyName) {
-        case 'ArrowUp':
+        case "ArrowLeft":
+          moveTilesPacket = new MoveTilesPacket(Direction.Left);
+          WebSocketController.sendPacket(moveTilesPacket);
+          store.commit("board/moveTilesToLeft");
           break;
-        case 'ArrowRight':
+        case "ArrowRight":
+          moveTilesPacket = new MoveTilesPacket(Direction.Right);
+          WebSocketController.sendPacket(moveTilesPacket);
+          store.commit("board/moveTilesToRight");
           break;
-        case 'ArrowDown':
+        case "ArrowUp":
+          moveTilesPacket = new MoveTilesPacket(Direction.Up);
+          WebSocketController.sendPacket(moveTilesPacket);
+          store.commit("board/moveTilesUp");
           break;
-        case 'ArrowLeft':
+        case "ArrowDown":
+          moveTilesPacket = new MoveTilesPacket(Direction.Down);
+          WebSocketController.sendPacket(moveTilesPacket);
+          store.commit("board/moveTilesDown");
           break;
       }
-    }
+    };
 
     return {
       numberOfRows,
@@ -119,7 +138,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../shared/scss/variables/measurements.scss';
+@use "../../../../../shared/scss/variables/measurements.scss";
 
 $board-color: rgb(50, 50, 50);
 

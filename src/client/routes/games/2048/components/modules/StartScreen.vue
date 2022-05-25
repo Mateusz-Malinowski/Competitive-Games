@@ -33,9 +33,13 @@ export default defineComponent({
         numberOfRows: gameSettings.numberOfRows,
         numberOfColumns: gameSettings.numberOfColumns,
       });
+
       store.commit("game/setGameStatus", GameStatus.Playing);
+
       const startGamePacket: StartGamePacket = new StartGamePacket();
       WebSocketController.sendPacket(startGamePacket);
+
+      store.dispatch('timer/start');
     };
 
     return { startGame };

@@ -1,6 +1,5 @@
 import { ActionContext, ActionTree, GetterTree, MutationTree } from "vuex";
-import { RootState } from "..";
-import { getTimeString as utilGetTimeString, padNumber } from "../../../../../../global/utilities";
+import { getTimeString as utilGetTimeString, padNumber } from "../../../../global/utilities";
 
 export interface TimerState {
   isTicking: boolean;
@@ -16,7 +15,7 @@ const state = (): TimerState => ({
   totalMiliseconds: 0
 });
 
-const getters: GetterTree<TimerState, RootState> = {
+const getters: GetterTree<TimerState, {}> = {
   getMiliseconds(state: TimerState): string {
     const miliseconds = Math.floor(state.totalMiliseconds % 1000);
     return padNumber(miliseconds, 3);
@@ -53,8 +52,8 @@ const mutations: MutationTree<TimerState> = {
   },
 }
 
-const actions: ActionTree<TimerState, RootState> = {
-  start({ state, commit, dispatch }: ActionContext<TimerState, RootState>): void {
+const actions: ActionTree<TimerState, {}> = {
+  start({ state, commit, dispatch }: ActionContext<TimerState, {}>): void {
     if (state.isTicking) return;
 
     const startTime = Date.now() - state.totalMiliseconds;
@@ -67,17 +66,17 @@ const actions: ActionTree<TimerState, RootState> = {
     commit('setInterval', interval);
     commit('setIsTicking', true);
   },
-  stop({ state, commit }: ActionContext<TimerState, RootState>): void {
+  stop({ state, commit }: ActionContext<TimerState, {}>): void {
     if (!state.isTicking) return;
 
     clearInterval(state.interval);
     commit('setIsTicking', false);
   },
-  reset({ commit }: ActionContext<TimerState, RootState>): void {
+  reset({ commit }: ActionContext<TimerState, {}>): void {
     commit('setTotalMiliseconds', 0);
     commit('setStartTime', Date.now());
   },
-  tick({ state, commit }: ActionContext<TimerState, RootState>): void {
+  tick({ state, commit }: ActionContext<TimerState, {}>): void {
     commit('setTotalMiliseconds', Date.now() - state.startTime);
   }
 }

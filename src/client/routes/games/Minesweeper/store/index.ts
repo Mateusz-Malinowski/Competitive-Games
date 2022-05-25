@@ -1,7 +1,7 @@
 import { InjectionKey } from 'vue';
 import { createStore, ModuleTree, Store, useStore as vuexUseStore } from 'vuex';
 import map, { MapState } from './modules/map';
-import timer, { TimerState } from './modules/timer';
+import timer, { TimerState } from '../../../../shared/store/modules/timer';
 import game, { GameState } from './modules/game';
 
 export interface RootState {

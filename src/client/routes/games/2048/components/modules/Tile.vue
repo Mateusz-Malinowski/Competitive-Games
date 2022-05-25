@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 
 type ClassName = `color-${number}`;
 
@@ -17,7 +17,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const className: ClassName = `color-${props.number}`;
+    const className = computed<ClassName>(() => `color-${props.number}`);
 
     return { className };
   },

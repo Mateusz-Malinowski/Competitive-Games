@@ -5,6 +5,9 @@
       <StartScreen v-if="gameStatus === GameStatus.Start" />
       <Board v-if="gameStatus === GameStatus.Playing" />
     </div>
+    <div class="content-block content-timer" v-if="gameStatus !== GameStatus.Start">
+      <Timer />
+    </div>
   </div>
 </template>
 
@@ -17,9 +20,10 @@ import { useStore } from '../store';
 import { GameStatus } from '../store/modules/game';
 import Board from './modules/Board.vue';
 import StartScreen from './modules/StartScreen.vue';
+import Timer from './modules/Timer.vue';
 
 export default defineComponent({
-  components: { Navbar, Board, StartScreen },
+  components: { Navbar, Board, StartScreen, Timer },
   setup() {
     const store = useStore();
 
@@ -46,6 +50,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@use '../../../../shared/scss/variables/measurements.scss';
+
 .wrapper-2048 {
   display: flex;
   justify-content: center;
@@ -53,6 +59,11 @@ export default defineComponent({
   .content-game {
     width: 800px;
     height: 800px;
+  }
+
+  .content-timer {
+    font-size: 3em;
+    margin-left: measurements.$page-spacing;
   }
 }
 

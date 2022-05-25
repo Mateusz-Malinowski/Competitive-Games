@@ -53,6 +53,6 @@ export default class PacketHandler extends ServerPacketHandler {
   }
 
   private handleMoveTilesPacket(packet: MoveTilesPacket): void {
-
+    this.player.board.handleMoveRequest(packet.direction);
   }
 }
