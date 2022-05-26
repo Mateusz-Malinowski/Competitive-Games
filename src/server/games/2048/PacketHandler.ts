@@ -47,7 +47,8 @@ export default class PacketHandler extends ServerPacketHandler {
       gameSettings.numberOfRows, 
       gameSettings.numberOfColumns, 
       gameSettings.initialNumbers,
-      gameSettings.firstNumbersCount
+      gameSettings.firstNumbersCount,
+      gameSettings.winThreshold
     );
     this.player.board.startGame();
   }

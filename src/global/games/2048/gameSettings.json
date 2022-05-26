@@ -2,5 +2,6 @@
     "numberOfRows": 4,
     "numberOfColumns": 4,
     "initialNumbers": [2, 4],
-    "firstNumbersCount": 2
+    "firstNumbersCount": 2,
+    "winThreshold": 2048
 }

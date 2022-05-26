@@ -4,6 +4,8 @@ import { getRandomInt } from "../../../global/utilities";
 import NewTilePacket from "../../../global/games/2048/packets/server/NewTilePacket";
 import Timer from '../../Timer';
 import { Direction } from "../../../global/games/2048/Direction";
+import GameOverPacket from "../../../global/games/2048/packets/server/GameOverPacket";
+import GameWonPacket from "../../../global/games/2048/packets/server/GameWonPacket";
 
 interface MoveTileInfo {
   tileMoved: boolean;
@@ -16,36 +18,48 @@ export default class Board {
   private numberOfColumns: number;
   private initialNumbers: number[];
   private firstNumbersCount: number;
+  private winThreshold: number;
+
   private fields: Field[][] = [];
   private timer: Timer = new Timer();
 
   public constructor(
-    player: Player, 
-    numberOfRows: number, 
-    numberOfColumns: number, 
+    player: Player,
+    numberOfRows: number,
+    numberOfColumns: number,
     initialNumbers: number[],
     firstNumbersCount: number,
+    winThreshold: number
   ) {
     this.player = player;
     this.numberOfRows = numberOfRows;
     this.numberOfColumns = numberOfColumns;
     this.initialNumbers = initialNumbers;
     this.firstNumbersCount = firstNumbersCount;
+    this.winThreshold = winThreshold;
 
     this.init();
   }
 
   public startGame(): void {
-    for (let i = 0; i < this.firstNumbersCount; i++)
+    for (let i = 0; i < this.firstNumbersCount; i++) {
       this.addNewTile();
+    }
 
     this.timer.start();
   }
 
   public handleMoveRequest(direction: Direction): void {
     const tilesWereMoved = this.moveTiles(direction);
-    if (tilesWereMoved)
+    if (tilesWereMoved) {
+      if (this.isThresholdReached())
+        return this.gameWon();
+
       this.addNewTile();
+
+      if (!this.isMovePossible())
+        return this.gameOver();
+    }
   }
 
   private init(): void {
@@ -183,5 +197,61 @@ export default class Board {
     }
 
     return { tileMoved: false, continueMovement: false };
+  }
+
+  private isMovePossible(): boolean {
+    if (!this.isFull()) return true;
+
+    for (let i = 0; i < this.numberOfRows; i++) {
+      for (let j = 0; j < this.numberOfColumns; j++) {
+        const field = this.fields[i][j];
+        const fieldOnLeft = j === 0 ? new Field(-1) : this.fields[i][j - 1];
+        const fieldOnRight = j === this.numberOfColumns - 1 ? new Field(-1) : this.fields[i][j + 1];
+        const fieldAbove = i === 0 ? new Field(-1) : this.fields[i - 1][j];
+        const fieldBelow = i === this.numberOfRows - 1 ? new Field(-1) : this.fields[i + 1][j];
+
+        if (
+          field.number === fieldOnLeft.number ||
+          field.number === fieldOnRight.number ||
+          field.number === fieldAbove.number ||
+          field.number === fieldBelow.number
+        )
+          return true;
+      }
+    }
+
+    return false;
+  }
+
+  private isFull(): boolean {
+    for (let i = 0; i < this.numberOfRows; i++)
+      for (let j = 0; j < this.numberOfColumns; j++)
+        if (this.fields[i][j].number === 0) return false;
+
+    return true;
+  }
+
+  private isThresholdReached(): boolean {
+    for (let i = 0; i < this.numberOfRows; i++)
+      for (let j = 0; j < this.numberOfColumns; j++)
+        if (this.fields[i][j].number >= this.winThreshold) return true;
+
+    return false;
+  }
+
+  private gameOver(): void {
+    this.timer.stop();
+
+    const time = this.timer.getTotalMiliseconds();
+    const gameOverPacket = new GameOverPacket(time);
+    this.player.packetHandler.sendPacket(gameOverPacket);
+  }
+
+  private gameWon(): void {
+    this.timer.stop();
+
+    const time = this.timer.getTotalMiliseconds();
+    const gameWonPacket = new GameWonPacket(time);
+    this.player.packetHandler.sendPacket(gameWonPacket);
   }
 }

@@ -1,4 +1,5 @@
 export enum ServerPacketType {
   NewTile,
-  GameOver
+  GameOver,
+  GameWon
 }
