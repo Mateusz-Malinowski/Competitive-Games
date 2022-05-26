@@ -4,7 +4,11 @@ import { getRandomInt } from "../../../global/utilities";
 import NewTilePacket from "../../../global/games/2048/packets/server/NewTilePacket";
 import Timer from '../../Timer';
 import { Direction } from "../../../global/games/2048/Direction";
-import Logger from "../../Logger";
+
+interface MoveTileInfo {
+  tileMoved: boolean;
+  continueMovement: boolean;
+}
 
 export default class Board {
   private player: Player;
@@ -58,7 +62,7 @@ export default class Board {
     do {
       row = getRandomInt(0, this.numberOfRows);
       column = getRandomInt(0, this.numberOfColumns);
-    } while (this.fields[row][column].number != 0);
+    } while (this.fields[row][column].number !== 0);
 
     const index = getRandomInt(0, this.initialNumbers.length);
     const number = this.initialNumbers[index];
@@ -86,29 +90,15 @@ export default class Board {
 
     for (let i = 0; i < this.numberOfRows; i++) {
       for (let j = 0; j < this.numberOfColumns; j++) {
-        const field = this.fields[i][j];
-        if (field.number === 0) continue;
+        if (this.fields[i][j].number === 0) continue;
 
         for (let k = 1; k <= j; k++) {
           const fieldToLeft = this.fields[i][j - k];
           const tile = this.fields[i][j - k + 1];
 
-          if (fieldToLeft.number === 0) {
-            fieldToLeft.number = tile.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-          }
-
-          else if (fieldToLeft.number === tile.number) {
-            fieldToLeft.number += fieldToLeft.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = this.moveTile(tile, fieldToLeft);
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
@@ -121,29 +111,15 @@ export default class Board {
 
     for (let i = 0; i < this.numberOfRows; i++) {
       for (let j = this.numberOfColumns - 1; j >= 0; j--) {
-        const field = this.fields[i][j];
-        if (field.number === 0) continue;
+        if (this.fields[i][j].number === 0) continue;
 
         for (let k = 1; k <= this.numberOfColumns - j - 1; k++) {
           const fieldToRight = this.fields[i][j + k];
           const tile = this.fields[i][j + k - 1];
 
-          if (fieldToRight.number === 0) {
-            fieldToRight.number = tile.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-          }
-
-          else if (fieldToRight.number === tile.number) {
-            fieldToRight.number += fieldToRight.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = this.moveTile(tile, fieldToRight);
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
@@ -156,29 +132,15 @@ export default class Board {
 
     for (let i = 0; i < this.numberOfColumns; i++) {
       for (let j = 0; j < this.numberOfRows; j++) {
-        const field = this.fields[j][i];
-        if (field.number === 0) continue;
+        if (this.fields[j][i].number === 0) continue;
 
         for (let k = 1; k <= j; k++) {
           const fieldAbove = this.fields[j - k][i];
           const tile = this.fields[j - k + 1][i];
 
-          if (fieldAbove.number === 0) {
-            fieldAbove.number = tile.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-          }
-
-          else if (fieldAbove.number === tile.number) {
-            fieldAbove.number += fieldAbove.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = this.moveTile(tile, fieldAbove);
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
@@ -191,32 +153,35 @@ export default class Board {
 
     for (let i = 0; i < this.numberOfColumns; i++) {
       for (let j = this.numberOfRows - 1; j >= 0; j--) {
-        const field = this.fields[j][i];
-        if (field.number === 0) continue;
+        if (this.fields[j][i].number === 0) continue;
 
         for (let k = 1; k <= this.numberOfRows - 1 - j; k++) {
           const fieldBelow = this.fields[j + k][i];
           const tile = this.fields[j + k - 1][i];
 
-          if (fieldBelow.number === 0) {
-            fieldBelow.number = tile.number;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-          }
-
-          else if (fieldBelow.number === tile.number) {
-            fieldBelow.number += fieldBelow.number;
-            tile.number = 0;
-            if (!tilesWereMoved)
-              tilesWereMoved = true;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = this.moveTile(tile, fieldBelow);
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
 
     return tilesWereMoved;
+  }
+
+  private moveTile(tile: Field, nextField: Field): MoveTileInfo {
+    if (nextField.number === 0) {
+      nextField.number = tile.number;
+      tile.number = 0;
+      return { tileMoved: true, continueMovement: true };
+    }
+
+    if (nextField.number === tile.number) {
+      nextField.number += nextField.number;
+      tile.number = 0;
+      return { tileMoved: true, continueMovement: false };
+    }
+
+    return { tileMoved: false, continueMovement: false };
   }
 }

@@ -1,16 +1,27 @@
-import { MutationTree } from "vuex";
-import { initialize2dArray } from "../../../../../../global/utilities";
+import { ActionContext, ActionTree, MutationTree } from "vuex";
+import { RootState } from "..";
 import NewTilePacket from "../../../../../../global/games/2048/packets/server/NewTilePacket";
 
 export interface BoardState {
   numberOfRows: number;
   numberOfColumns: number;
   fields: Field[][];
+  movementEnabled: boolean;
 }
 
 export interface InitializationData {
   numberOfRows: number;
   numberOfColumns: number;
+}
+
+export interface MoveTileData {
+  tile: Field;
+  nextField: Field;
+}
+
+interface MoveTileInfo {
+  tileMoved: boolean;
+  continueMovement: boolean;
 }
 
 interface Field {
@@ -20,7 +31,8 @@ interface Field {
 const state = (): BoardState => ({
   numberOfRows: 0,
   numberOfColumns: 0,
-  fields: []
+  fields: [],
+  movementEnabled: false,
 });
 
 const mutations: MutationTree<BoardState> = {
@@ -34,112 +46,112 @@ const mutations: MutationTree<BoardState> = {
         state.fields[i][j] = { number: 0 };
     }
   },
-  moveTilesToLeft(state: BoardState): void {
+  addNewTile(state: BoardState, newTilePacket: NewTilePacket): void {
+    state.fields[newTilePacket.row][newTilePacket.column].number = newTilePacket.number;
+  },
+  enableMovement(state: BoardState): void {
+    state.movementEnabled = true;
+  },
+  disableMovement(state: BoardState): void {
+    state.movementEnabled = false;
+  }
+}
+
+const actions: ActionTree<BoardState, RootState> = {
+  async moveTilesToLeft({ state, dispatch }: ActionContext<BoardState, RootState>): Promise<boolean> {
+    let tilesWereMoved = false;
+
     for (let i = 0; i < state.numberOfRows; i++) {
       for (let j = 0; j < state.numberOfColumns; j++) {
-        const field = state.fields[i][j];
-        if (field.number === 0) continue;
+        if (state.fields[i][j].number === 0) continue;
 
         for (let k = 1; k <= j; k++) {
           const fieldToLeft = state.fields[i][j - k];
           const tile = state.fields[i][j - k + 1];
 
-          if (fieldToLeft.number === 0) {
-            fieldToLeft.number = tile.number;
-            tile.number = 0;
-          }
-
-          else if (fieldToLeft.number === tile.number) {
-            fieldToLeft.number += fieldToLeft.number;
-            tile.number = 0;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = await dispatch('moveTile', { tile: tile, nextField: fieldToLeft });
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
+
+    return tilesWereMoved;
   },
-  moveTilesToRight(state: BoardState): void {
+  async moveTilesToRight({ state, dispatch }: ActionContext<BoardState, RootState>): Promise<boolean> {
+    let tilesWereMoved = false;
+
     for (let i = 0; i < state.numberOfRows; i++) {
       for (let j = state.numberOfColumns - 1; j >= 0; j--) {
-        const field = state.fields[i][j];
-        if (field.number === 0) continue;
+        if (state.fields[i][j].number === 0) continue;
 
         for (let k = 1; k <= state.numberOfColumns - j - 1; k++) {
           const fieldToRight = state.fields[i][j + k];
           const tile = state.fields[i][j + k - 1];
 
-          if (fieldToRight.number === 0) {
-            fieldToRight.number = tile.number;
-            tile.number = 0;
-          }
-
-          else if (fieldToRight.number === tile.number) {
-            fieldToRight.number += fieldToRight.number;
-            tile.number = 0;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = await dispatch('moveTile', { tile: tile, nextField: fieldToRight });
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
+
+    return tilesWereMoved;
   },
-  moveTilesUp(state: BoardState): void {
+  async moveTilesUp({ state, dispatch }: ActionContext<BoardState, RootState>): Promise<boolean> {
+    let tilesWereMoved = false;
+
     for (let i = 0; i < state.numberOfColumns; i++) {
       for (let j = 0; j < state.numberOfRows; j++) {
-        const field = state.fields[j][i];
-        if (field.number === 0) continue;
+        if (state.fields[j][i].number === 0) continue;
 
         for (let k = 1; k <= j; k++) {
           const fieldAbove = state.fields[j - k][i];
           const tile = state.fields[j - k + 1][i];
 
-          if (fieldAbove.number === 0) {
-            fieldAbove.number = tile.number;
-            tile.number = 0;
-          }
-
-          else if (fieldAbove.number === tile.number) {
-            fieldAbove.number += fieldAbove.number;
-            tile.number = 0;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = await dispatch('moveTile', { tile: tile, nextField: fieldAbove });
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
+
+    return tilesWereMoved;
   },
-  moveTilesDown(state: BoardState): void {
+  async moveTilesDown({ state, dispatch }: ActionContext<BoardState, RootState>): Promise<boolean> {
+    let tilesWereMoved = false;
+
     for (let i = 0; i < state.numberOfColumns; i++) {
       for (let j = state.numberOfRows - 1; j >= 0; j--) {
-        const field = state.fields[j][i];
-        if (field.number === 0) continue;
+        if (state.fields[j][i].number === 0) continue;
 
         for (let k = 1; k <= state.numberOfRows - 1 - j; k++) {
           const fieldBelow = state.fields[j + k][i];
           const tile = state.fields[j + k - 1][i];
 
-          if (fieldBelow.number === 0) {
-            fieldBelow.number = tile.number;
-            tile.number = 0;
-          }
-
-          else if (fieldBelow.number === tile.number) {
-            fieldBelow.number += fieldBelow.number;
-            tile.number = 0;
-            break;
-          }
-
-          else break;
+          const moveTileInfo = await dispatch('moveTile', { tile: tile, nextField: fieldBelow });
+          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
+          if (!moveTileInfo.continueMovement) break;
         }
       }
     }
+
+    return tilesWereMoved;
   },
-  addNewTile(state: BoardState, newTilePacket: NewTilePacket): void {
-    state.fields[newTilePacket.row][newTilePacket.column].number = newTilePacket.number;
+  async moveTile({}: ActionContext<BoardState, RootState>, { tile, nextField }: MoveTileData): Promise<MoveTileInfo> {
+    if (nextField.number === 0) {
+      nextField.number = tile.number;
+      tile.number = 0;
+      return { tileMoved: true, continueMovement: true };
+    }
+
+    if (nextField.number === tile.number) {
+      nextField.number += nextField.number;
+      tile.number = 0;
+      return { tileMoved: true, continueMovement: false };
+    }
+
+    return { tileMoved: false, continueMovement: false };
   },
 }
 
@@ -147,4 +159,5 @@ export default {
   namespaced: true,
   state,
   mutations,
+  actions
 }

@@ -48,9 +48,8 @@ export default defineComponent({
 
     const borderWidthPx = 10;
     const numberOfRows = computed<number>(() => store.state.board.numberOfRows);
-    const numberOfColumns = computed<number>(
-      () => store.state.board.numberOfColumns
-    );
+    const numberOfColumns = computed<number>(() => store.state.board.numberOfColumns);
+    const movementEnabled = computed<boolean>(() => store.state.board.movementEnabled);
     const tiles = computed<Tile[]>(() => {
       const tiles: Tile[] = [];
       for (let i = 0; i < numberOfRows.value; i++) {
@@ -90,30 +89,46 @@ export default defineComponent({
       }
     };
 
-    const handleKeyUp = (keyName: string): void => {
-      let moveTilesPacket: MoveTilesPacket;
+    const handleKeyUp = async (keyName: string): Promise<void> => {
+      if (!movementEnabled.value) return;
 
       switch (keyName) {
-        case "ArrowLeft":
-          moveTilesPacket = new MoveTilesPacket(Direction.Left);
-          WebSocketController.sendPacket(moveTilesPacket);
-          store.commit("board/moveTilesToLeft");
+        case "ArrowLeft": {
+          const tilesWereMoved = await store.dispatch("board/moveTilesToLeft");
+          if (tilesWereMoved) {
+            store.commit('board/disableMovement')
+            const moveTilesPacket = new MoveTilesPacket(Direction.Left);
+            WebSocketController.sendPacket(moveTilesPacket);
+          }
           break;
-        case "ArrowRight":
-          moveTilesPacket = new MoveTilesPacket(Direction.Right);
-          WebSocketController.sendPacket(moveTilesPacket);
-          store.commit("board/moveTilesToRight");
+        }
+        case "ArrowRight": {
+          const tilesWereMoved = await store.dispatch("board/moveTilesToRight");
+          if (tilesWereMoved) {
+            store.commit('board/disableMovement')
+            const moveTilesPacket = new MoveTilesPacket(Direction.Right);
+            WebSocketController.sendPacket(moveTilesPacket);
+          }
           break;
-        case "ArrowUp":
-          moveTilesPacket = new MoveTilesPacket(Direction.Up);
-          WebSocketController.sendPacket(moveTilesPacket);
-          store.commit("board/moveTilesUp");
+        }
+        case "ArrowUp": {
+          const tilesWereMoved = await store.dispatch("board/moveTilesUp");
+          if (tilesWereMoved) {
+            store.commit('board/disableMovement')
+            const moveTilesPacket = new MoveTilesPacket(Direction.Up);
+            WebSocketController.sendPacket(moveTilesPacket);
+          }
           break;
-        case "ArrowDown":
-          moveTilesPacket = new MoveTilesPacket(Direction.Down);
-          WebSocketController.sendPacket(moveTilesPacket);
-          store.commit("board/moveTilesDown");
+        }
+        case "ArrowDown": {
+          const tilesWereMoved = await store.dispatch("board/moveTilesDown");
+          if (tilesWereMoved) {
+            store.commit('board/disableMovement')
+            const moveTilesPacket = new MoveTilesPacket(Direction.Down);
+            WebSocketController.sendPacket(moveTilesPacket);
+          }
           break;
+        }
       }
     };
 
