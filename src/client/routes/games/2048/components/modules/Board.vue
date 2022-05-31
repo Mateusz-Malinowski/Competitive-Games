@@ -10,7 +10,7 @@
     <Tile
       v-for="tile in tiles"
       :key="`${tile.row}${tile.column}`"
-      :style="fieldStyles[tile.row][tile.column]"
+      :style="tile.style"
       :number="tile.number"
     />
   </div>
@@ -18,15 +18,19 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watchEffect } from "vue";
 import { useStore } from "../../store";
-import { initialize2dArray } from "../../../../../../global/utilities";
-import MoveTilesPacket from "../../../../../../global/games/2048/packets/client/MoveTilesPacket";
+import {
+  initialize2dArray,
+  deepCopy2dArray,
+} from "../../../../../../global/utilities";
 import KeyboardEvents from "../../../../../shared/components/KeyboardEvents.vue";
 import Field from "./Field.vue";
 import Tile from "./Tile.vue";
-import WebSocketController from "../../api/WebSocketController";
+import { Field as StoreField } from "../../store/modules/board";
+import MoveTilesPacket from "../../../../../../global/games/2048/packets/client/MoveTilesPacket";
 import { Direction } from "../../../../../../global/games/2048/Direction";
+import WebSocketController from "../../api/WebSocketController";
 
 interface FieldStyle {
   width: string;
@@ -39,6 +43,20 @@ interface Tile {
   row: number;
   column: number;
   number: number;
+  style: TileStyle;
+}
+
+interface TileStyle {
+  width: string;
+  height: string;
+  top: string;
+  left: string;
+}
+
+interface TileTargetPosition {
+  tile: Tile;
+  left: number;
+  top: number;
 }
 
 export default defineComponent({
@@ -49,28 +67,39 @@ export default defineComponent({
     const borderWidthPx = 10;
     const numberOfRows = computed<number>(() => store.state.board.numberOfRows);
     const numberOfColumns = computed<number>(() => store.state.board.numberOfColumns);
+    const fields = computed<StoreField[][]>(() => store.state.board.fields);
     const movementEnabled = computed<boolean>(() => store.state.board.movementEnabled);
-    const tiles = computed<Tile[]>(() => {
-      const tiles: Tile[] = [];
-      for (let i = 0; i < numberOfRows.value; i++) {
-        for (let j = 0; j < numberOfColumns.value; j++) {
-          const field = store.state.board.fields[i][j];
-          if (field.number !== 0)
-            tiles.push({ row: i, column: j, number: field.number });
-        }
-      }
-      return tiles;
-    });
-
     const boardElement = ref<HTMLDivElement>();
-
     const fieldStyles = ref<FieldStyle[][]>(
       initialize2dArray<FieldStyle>(
-        { width: "0", height: "0", top: "0", left: "0" },
+        { top: "0", left: "0", width: "0", height: "0" },
         numberOfRows.value,
         numberOfColumns.value
       )
     );
+    const tilesComputed = computed<Tile[]>(() => {
+      const array: Tile[] = [];
+      for (let i = 0; i < numberOfRows.value; i++) {
+        for (let j = 0; j < numberOfColumns.value; j++) {
+          const field = fields.value[i][j];
+          if (field.number !== 0)
+            array.push({
+              row: i,
+              column: j,
+              number: field.number,
+              style: Object.assign({}, fieldStyles.value[i][j]),
+            });
+        }
+      }
+      return array;
+    });
+    const tiles = ref<Tile[]>(tilesComputed.value);
+    // if data from store has changed update tiles ref 
+    // (computed is readonly - change in style is needed to animate)
+    watchEffect(() => {
+      console.log(store.state.board.fields);
+      tiles.value = tilesComputed.value;
+    });
 
     const adjustSize = (): void => {
       const boardDiv = boardElement.value as HTMLDivElement;
@@ -92,44 +121,174 @@ export default defineComponent({
     const handleKeyUp = async (keyName: string): Promise<void> => {
       if (!movementEnabled.value) return;
 
-      switch (keyName) {
-        case "ArrowLeft": {
-          const tilesWereMoved = await store.dispatch("board/moveTilesToLeft");
-          if (tilesWereMoved) {
-            store.commit('board/disableMovement')
-            const moveTilesPacket = new MoveTilesPacket(Direction.Left);
-            WebSocketController.sendPacket(moveTilesPacket);
-          }
+      let direction;
+
+      store.commit("board/disableMovement");
+
+      switch(keyName) {
+        case "ArrowLeft":
+          direction = Direction.Left;
           break;
-        }
-        case "ArrowRight": {
-          const tilesWereMoved = await store.dispatch("board/moveTilesToRight");
-          if (tilesWereMoved) {
-            store.commit('board/disableMovement')
-            const moveTilesPacket = new MoveTilesPacket(Direction.Right);
-            WebSocketController.sendPacket(moveTilesPacket);
-          }
+        case "ArrowRight":
+          direction = Direction.Right;
           break;
-        }
-        case "ArrowUp": {
-          const tilesWereMoved = await store.dispatch("board/moveTilesUp");
-          if (tilesWereMoved) {
-            store.commit('board/disableMovement')
-            const moveTilesPacket = new MoveTilesPacket(Direction.Up);
-            WebSocketController.sendPacket(moveTilesPacket);
-          }
+        case "ArrowUp":
+          direction = Direction.Up;
           break;
-        }
-        case "ArrowDown": {
-          const tilesWereMoved = await store.dispatch("board/moveTilesDown");
-          if (tilesWereMoved) {
-            store.commit('board/disableMovement')
-            const moveTilesPacket = new MoveTilesPacket(Direction.Down);
-            WebSocketController.sendPacket(moveTilesPacket);
-          }
+        case "ArrowDown":
+          direction = Direction.Down;
           break;
-        }
+        default:
+          return;
       }
+
+      const tilesWereMoved = await animateTiles(direction);
+      if (tilesWereMoved) {
+        store.commit('board/moveTiles', direction);
+        const moveTilesPacket = new MoveTilesPacket(direction);
+        WebSocketController.sendPacket(moveTilesPacket);
+      }
+      else
+        store.commit('board/enableMovement');
+    };
+
+    const animateTiles = async (direction: Direction): Promise<boolean> => {
+      const tilesTargetPositions: TileTargetPosition[] = [];
+      const fieldsCopy = deepCopy2dArray<StoreField>(fields.value);
+      let tilesWereMoved: boolean = false;
+      let previousTileWasMerged: boolean = false;
+
+      switch (direction) {
+        case Direction.Left:
+          for (let i = 0; i < numberOfRows.value; i++)
+            for (let j = 0; j < numberOfColumns.value; j++) {
+              if (fieldsCopy[i][j].number === 0) continue;
+              const tileTargetPosition = getTileTargetPosition(i, j);
+              for (let k = 1; k <= j; k++) {
+                const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[i][j - k + 1], fieldsCopy[i][j - k]);
+                if (wasMoved) tileTargetPosition.left = parseFloat(fieldStyles.value[i][j - k].left);
+                if (!continueMove) break;
+              }
+            }
+          break;
+        case Direction.Right:
+          for (let i = 0; i < numberOfRows.value; i++)
+            for (let j = numberOfColumns.value - 1; j >= 0; j--) {
+              if (fieldsCopy[i][j].number === 0) continue;
+              const tileTargetPosition = getTileTargetPosition(i, j);
+              for (let k = 1; k <= numberOfColumns.value - 1 - j; k++) {
+                const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[i][j + k - 1], fieldsCopy[i][j + k]);
+                if (wasMoved) tileTargetPosition.left = parseFloat(fieldStyles.value[i][j + k].left);
+                if (!continueMove) break;
+              }
+            }
+          break;
+        case Direction.Up:
+          for (let i = 0; i < numberOfColumns.value; i++)
+            for (let j = 0; j < numberOfRows.value; j++) {
+              if (fieldsCopy[j][i].number === 0) continue;
+              const tileTargetPosition = getTileTargetPosition(j, i);
+              for (let k = 1; k <= j; k++) {
+                const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[j - k + 1][i], fieldsCopy[j - k][i]);
+                if (wasMoved) tileTargetPosition.top = parseFloat(fieldStyles.value[j - k][i].top);
+                if (!continueMove) break;
+              }
+            }
+          break;
+        case Direction.Down:
+          for (let i = 0; i < numberOfColumns.value; i++)
+            for (let j = numberOfRows.value - 1; j >= 0; j--) {
+              if (fieldsCopy[j][i].number === 0) continue;
+              const tileTargetPosition = getTileTargetPosition(j, i);
+              for (let k = 1; k <= numberOfRows.value - 1 - j; k++) {
+                const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[j + k - 1][i], fieldsCopy[j + k][i]);
+                if (wasMoved) tileTargetPosition.top = parseFloat(fieldStyles.value[j + k][i].top);
+                if (!continueMove) break;
+              }
+            }
+          break;
+      }
+
+      if (!tilesWereMoved) return false;
+      await moveTilesIntoPositions(tilesTargetPositions);
+      return true;
+
+      function getTileTargetPosition(row: number, column: number): TileTargetPosition {
+        const tile = tiles.value.find((element) => (element.row === row && element.column === column)) as Tile;
+        const tileTargetPosition = { tile: tile, left: parseFloat(tile.style.left), top: parseFloat(tile.style.top) };
+        tilesTargetPositions.push(tileTargetPosition);
+        return tileTargetPosition;
+      }
+
+      function predictTileMovement(tilePrediction: StoreField, nextField: StoreField): { wasMoved: boolean, continueMove: boolean } {
+        let wasMoved = false, continueMove = false;
+
+        if (nextField.number === 0) {
+          nextField.number = tilePrediction.number;
+          tilePrediction.number = 0;
+          wasMoved = true;
+          continueMove = true;
+        }
+        else if (nextField.number === tilePrediction.number && !previousTileWasMerged) {
+          nextField.number += nextField.number;
+          tilePrediction.number = 0;
+          previousTileWasMerged = true;
+          wasMoved = true;
+          continueMove = false;
+        }
+        else if (previousTileWasMerged)
+          previousTileWasMerged = false;
+
+        if (!tilesWereMoved && wasMoved) tilesWereMoved = true;
+
+        return { wasMoved, continueMove };
+      }
+    }
+
+    const moveTilesIntoPositions = async (tilesTargetPositions: TileTargetPosition[]): Promise<void> => {
+      return new Promise<void>((resolve) => {
+        console.log('start');
+        const speed = 0.5;
+        let lastTimeStamp: number | null = null;
+        window.requestAnimationFrame(render);
+
+        function render(timestamp: number): void {
+          if (lastTimeStamp === null) lastTimeStamp = timestamp;
+          const delta = timestamp - lastTimeStamp;
+
+          const tilesInPlace = tilesTargetPositions.every((tilePosition) => (
+            parseFloat(tilePosition.tile.style.left) === tilePosition.left &&
+            parseFloat(tilePosition.tile.style.top) === tilePosition.top
+          ));
+          if (tilesInPlace) {
+            console.log('end');
+            return resolve();
+          }
+
+          tilesTargetPositions.forEach((tilePosition) => {
+            const currentLeft = parseFloat(tilePosition.tile.style.left);
+            const currentTop = parseFloat(tilePosition.tile.style.top);
+            const targetLeft = tilePosition.left;
+            const targetTop = tilePosition.top;
+            const leftDifference = Math.abs(targetLeft - currentLeft);
+            const topDifference = Math.abs(targetTop - currentTop);
+            const increase = delta * speed;
+
+            if (leftDifference > 0) {
+              const newLeft = currentLeft > targetLeft ? currentLeft - increase : currentLeft + increase;
+              tilePosition.tile.style.left = (increase > leftDifference ? tilePosition.left : newLeft) + "px";
+            }
+
+            if (topDifference > 0) {
+              const newTop = currentTop > targetTop ? currentTop - increase : currentTop + increase;
+              tilePosition.tile.style.top = (increase > topDifference ? tilePosition.top : newTop) + "px";
+            }
+          });
+
+          lastTimeStamp = timestamp;
+          window.requestAnimationFrame(render);
+        }
+      });
     };
 
     return {

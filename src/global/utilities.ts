@@ -71,3 +71,32 @@ export function initialize2dArray<T>(initValue: T, numberOfRows: number, numberO
 
   return array;
 }
+
+/**
+ * T can be a enumerable or an object containing ONLY enumerable properties
+ * 
+ * @param array 2d array to be copied
+ * @returns 
+ */
+export function deepCopy2dArray<T>(array: T[][]): T[][] {
+  const newArray: T[][] = [];
+
+  for (let i = 0; i < array.length; i++) {
+    newArray.push([]);
+    for (let j = 0; j < array[i].length; j++) {
+      const oldValue = array[i][j];
+
+      if ( // is object
+        typeof oldValue === 'object' &&
+        !Array.isArray(oldValue) &&
+        oldValue !== null
+      )
+        newArray[i][j] = Object.assign({}, oldValue);
+
+      else // enumerable
+        newArray[i][j] = array[i][j];
+    }
+  }
+
+  return newArray;
+}
