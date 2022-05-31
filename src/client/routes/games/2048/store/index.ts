@@ -1,13 +1,10 @@
 import { InjectionKey } from 'vue';
 import { createStore, ModuleTree, Store, useStore as vuexUseStore } from 'vuex';
 import board, { BoardState } from './modules/board';
-import game, { GameState } from './modules/game';
-import timer, { TimerState } from '../../../../shared/store/modules/timer';
+import { sharedModules, SharedState } from '../../../../shared/store';
 
-export interface RootState {
-  game: GameState;
+export interface RootState extends SharedState {
   board: BoardState;
-  timer: TimerState;
 }
 
 export const key: InjectionKey<Store<RootState>> = Symbol();
@@ -17,9 +14,8 @@ export function useStore(): Store<RootState> {
 }
 
 const modules: ModuleTree<RootState> = {
-  game,
+  ...sharedModules,
   board,
-  timer
 }
 
 export default createStore<RootState>({

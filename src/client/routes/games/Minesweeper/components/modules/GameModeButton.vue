@@ -13,7 +13,7 @@ import StartGamePacket from "../../../../../../global/games/Minesweeper/packets/
 import AnimatedButton from "../../../../../shared/components/AnimatedButton.vue";
 import WebSocketController from "../../api/WebSocketController";
 import { useStore } from "../../store";
-import { GameStatus } from "../../store/modules/game";
+import { GameStatus } from "../../../../../shared/store/modules/game";
 
 export default defineComponent({
   components: { AnimatedButton },

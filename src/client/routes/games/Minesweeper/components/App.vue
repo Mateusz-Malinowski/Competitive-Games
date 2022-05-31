@@ -2,12 +2,17 @@
   <Navbar />
   <div class="wrapper wrapper-minesweeper">
     <div class="content-block content-game">
-      <GameModes v-if="gameStatus == GameStatus.ChoosingGameMode" />
-      <Map v-if="gameStatus == GameStatus.Playing" />
-      <Results v-if="gameStatus == GameStatus.SeeingResults" />
+      <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
+        <template #description>
+
+        </template>
+      </StartScreen>
+      <GameModes v-if="gameStatus === GameStatus.GameMode" />
+      <Map v-if="gameStatus === GameStatus.Playing" />
+      <Results :store="store" v-if="gameStatus === GameStatus.Results" />
     </div>
     <div class="content-block content-timer">
-      <Timer />
+      <Timer :store="store" />
     </div>
   </div>
 </template>
@@ -17,26 +22,31 @@ import { computed, defineComponent } from "vue";
 import Navbar from "../../../../shared/components/Navbar.vue";
 import GameModes from "./modules/GameModes.vue";
 import Map from "./modules/Map.vue";
-import Results from "./modules/Results.vue";
-import Timer from "./modules/Timer.vue";
+import Results from "../../../../shared/components/Results.vue";
+import Timer from "../../../../shared/components/Timer.vue";
 
 import WebSocketController from "../api/WebSocketController";
 import FieldPacket from "../../../../../global/games/Minesweeper/packets/server/FieldPacket";
 import { useStore } from "../store";
-import { GameResult, GameStatus } from "../store/modules/game";
+import { GameResult, GameStatus } from "../../../../shared/store/modules/game";
 import GameOverPacket from "../../../../../global/games/Minesweeper/packets/server/GameOverPacket";
 import GameWonPacket from "../../../../../global/games/Minesweeper/packets/server/GameWonPacket";
+import StartScreen from "../../../../shared/components/StartScreen.vue";
 
 export default defineComponent({
-  components: { Navbar, Map, GameModes, Timer, Results },
+  components: { Navbar, Map, GameModes, Timer, Results, StartScreen },
   setup() {
-    const store = useStore();
+    const store = computed(() => useStore());
 
-    const gameStatus = computed(() => store.state.game.gameStatus);
+    const gameStatus = computed(() => store.value.state.game.gameStatus);
+
+    const startGame = (): void => {
+      store.value.commit("game/setGameStatus", GameStatus.GameMode);
+    }
 
     const stopAndCorrectTimer = (serverTime: number): void => {
-      store.dispatch("timer/stop");
-      store.commit("timer/setTotalMiliseconds", serverTime);
+      store.value.dispatch("timer/stop");
+      store.value.commit("timer/setTotalMiliseconds", serverTime);
     };
 
     const handleEndGame = (
@@ -44,15 +54,15 @@ export default defineComponent({
       gameResult: GameResult
     ): void => {
       stopAndCorrectTimer(serverTime);
-      store.commit("game/setGameResult", gameResult);
+      store.value.commit("game/setGameResult", gameResult);
       setTimeout(() => {
-        store.commit("game/setGameStatus", GameStatus.SeeingResults);
+        store.value.commit("game/setGameStatus", GameStatus.Results);
       }, 3000);
     };
 
     WebSocketController.handleFieldPacket = (packet: FieldPacket): void => {
-      if (!store.state.timer.isTicking) store.dispatch("timer/start");
-      store.commit("map/updateFieldData", packet);
+      if (!store.value.state.timer.isTicking) store.value.dispatch("timer/start");
+      store.value.commit("map/updateFieldData", packet);
     };
 
     WebSocketController.handleGameOverPacket = (
@@ -65,7 +75,7 @@ export default defineComponent({
       handleEndGame(packet.time, GameResult.Win);
     };
 
-    return { gameStatus, GameStatus };
+    return { store, gameStatus, GameStatus, startGame };
   },
   async mounted() {
     const webSocketController = new WebSocketController();

@@ -14,7 +14,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { FieldState } from "../../../../../../global/games/Minesweeper/FieldState";
-import { ClientPacketType } from "../../../../../../global/games/Minesweeper/packets/client/ClientPacketType";
 import FieldPacket from "../../../../../../global/games/Minesweeper/packets/client/FieldPacket";
 import WebSocketController from "../../api/WebSocketController";
 import { useStore } from "../../store";

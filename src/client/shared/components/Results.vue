@@ -19,21 +19,27 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
-import { useStore } from "../../store";
-import { GameResult, GameStatus } from "../../store/modules/game";
-import AnimatedButton from '../../../../../shared/components/AnimatedButton.vue';
+import { computed, defineComponent, PropType } from "vue";
+import { GameResult, GameStatus } from "../store/modules/game";
+import { SharedState } from '../store'
+import AnimatedButton from '../components/AnimatedButton.vue';
+import { Store } from "vuex";
 
 export default defineComponent({
   components: { AnimatedButton },
-  setup() {
-    const store = useStore();
-
-    const result = computed<GameResult>(() => store.state.game.gameResult);
+  props: {
+    store: {
+      required: true,
+      type: Object as PropType<Store<SharedState>>
+    }
+  },
+  setup(props) {
+    // const store = props.store as Store<SharedState>;
+    const result = computed<GameResult>(() => props.store.state.game.gameResult);
 
     const tryAgain = (): void => {
-      store.commit('game/setGameStatus', GameStatus.ChoosingGameMode);
-      store.dispatch('timer/reset');
+      props.store.commit('game/setGameStatus', GameStatus.Start);
+      props.store.dispatch('timer/reset');
     }
 
     return { result, GameResult, tryAgain };
@@ -42,8 +48,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../shared/scss/variables/colors';
-@use '../../../../../shared/scss/variables/measurements';
+@use '../scss/variables/colors';
+@use '../scss/variables/measurements';
 
 .results {
   display: flex;
