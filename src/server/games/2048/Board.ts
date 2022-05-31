@@ -149,7 +149,7 @@ export default class Board {
       continueMove = true;
       if (!this.tilesWereMoved) this.tilesWereMoved = true;
     }
-    else if (nextField.number === tile.number) {
+    else if (nextField.number === tile.number && !this.previousTileWasMerged) {
       nextField.number += nextField.number;
       tile.number = 0;
       continueMove = false;
