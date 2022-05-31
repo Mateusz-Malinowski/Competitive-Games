@@ -48,11 +48,12 @@ const mutations: MutationTree<BoardState> = {
   },
   moveTiles(state: BoardState, direction: Direction): void {
     const fieldsCopy = deepCopy2dArray<Field>(state.fields);
-    let previousTileWasMerged: boolean = false;
+    let previousTileWasMerged: boolean;
 
     switch (direction) {
       case Direction.Left:
-        for (let i = 0; i < state.numberOfRows; i++)
+        for (let i = 0; i < state.numberOfRows; i++) {
+          previousTileWasMerged = false;
           for (let j = 0; j < state.numberOfColumns; j++) {
             if (fieldsCopy[i][j].number === 0) continue;
             for (let k = 1; k <= j; k++) {
@@ -60,9 +61,11 @@ const mutations: MutationTree<BoardState> = {
               if (!continueMove) break;
             }
           }
+        }
         break;
       case Direction.Right:
-        for (let i = 0; i < state.numberOfRows; i++)
+        for (let i = 0; i < state.numberOfRows; i++) {
+          previousTileWasMerged = false;
           for (let j = state.numberOfColumns - 1; j >= 0; j--) {
             if (fieldsCopy[i][j].number === 0) continue;
             for (let k = 1; k <= state.numberOfColumns - 1 - j; k++) {
@@ -70,9 +73,11 @@ const mutations: MutationTree<BoardState> = {
               if (!continueMove) break;
             }
           }
+        }
         break;
       case Direction.Up:
-        for (let i = 0; i < state.numberOfColumns; i++)
+        for (let i = 0; i < state.numberOfColumns; i++) {
+          previousTileWasMerged = false;
           for (let j = 0; j < state.numberOfRows; j++) {
             if (fieldsCopy[j][i].number === 0) continue;
             for (let k = 1; k <= j; k++) {
@@ -80,9 +85,11 @@ const mutations: MutationTree<BoardState> = {
               if (!continueMove) break;
             }
           }
+        }
         break;
       case Direction.Down:
-        for (let i = 0; i < state.numberOfColumns; i++)
+        for (let i = 0; i < state.numberOfColumns; i++) {
+          previousTileWasMerged = false;
           for (let j = state.numberOfRows - 1; j >= 0; j--) {
             if (fieldsCopy[j][i].number === 0) continue;
             for (let k = 1; k <= state.numberOfRows - 1 - j; k++) {
@@ -90,6 +97,7 @@ const mutations: MutationTree<BoardState> = {
               if (!continueMove) break;
             }
           }
+        }
         break;
     }
 

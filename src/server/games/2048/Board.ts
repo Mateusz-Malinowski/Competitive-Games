@@ -7,10 +7,6 @@ import { Direction } from "../../../global/games/2048/Direction";
 import GameOverPacket from "../../../global/games/2048/packets/server/GameOverPacket";
 import GameWonPacket from "../../../global/games/2048/packets/server/GameWonPacket";
 
-interface MoveTileInfo {
-  tileMoved: boolean;
-  continueMovement: boolean;
-}
 
 export default class Board {
   private player: Player;
@@ -22,6 +18,9 @@ export default class Board {
 
   private fields: Field[][] = [];
   private timer: Timer = new Timer();
+
+  private previousTileWasMerged: boolean;
+  private tilesWereMoved: boolean;
 
   public constructor(
     player: Player,
@@ -50,8 +49,8 @@ export default class Board {
   }
 
   public handleMoveRequest(direction: Direction): void {
-    const tilesWereMoved = this.moveTiles(direction);
-    if (tilesWereMoved) {
+    this.moveTiles(direction);
+    if (this.tilesWereMoved) {
       if (this.isThresholdReached())
         return this.gameWon();
 
@@ -86,117 +85,81 @@ export default class Board {
     this.player.packetHandler.sendPacket(newTilePacket);
   }
 
-  private moveTiles(direction: Direction): boolean {
+  private moveTiles(direction: Direction): void {
+    this.tilesWereMoved = false;
+
     switch (direction) {
       case Direction.Left:
-        return this.moveTilesToLeft();
+        for (let i = 0; i < this.numberOfRows; i++) {
+          this.previousTileWasMerged = false;
+          for (let j = 0; j < this.numberOfColumns; j++) {
+            if (this.fields[i][j].number === 0) continue;
+            for (let k = 1; k <= j; k++) {
+              const continueMove = this.moveTile(this.fields[i][j - k + 1], this.fields[i][j - k]);
+              if (!continueMove) break;
+            }
+          }
+        }
+        break;
       case Direction.Right:
-        return this.moveTilesToRight();
+        for (let i = 0; i < this.numberOfRows; i++) {
+          this.previousTileWasMerged = false;
+          for (let j = this.numberOfColumns - 1; j >= 0; j--) {
+            if (this.fields[i][j].number === 0) continue;
+            for (let k = 1; k <= this.numberOfColumns - j - 1; k++) {
+              const continueMove = this.moveTile(this.fields[i][j + k - 1], this.fields[i][j + k]);
+              if (!continueMove) break;
+            }
+          }
+        }
+        break;
       case Direction.Up:
-        return this.moveTilesUp();
+        for (let i = 0; i < this.numberOfColumns; i++) {
+          this.previousTileWasMerged = false;
+          for (let j = 0; j < this.numberOfRows; j++) {
+            if (this.fields[j][i].number === 0) continue;
+            for (let k = 1; k <= j; k++) {
+              const continueMove = this.moveTile(this.fields[j - k + 1][i], this.fields[j - k][i]);
+              if (!continueMove) break;
+            }
+          }
+        }
+        break;
       case Direction.Down:
-        return this.moveTilesDown();
-    }
-  }
-
-  private moveTilesToLeft(): boolean {
-    let tilesWereMoved = false;
-
-    for (let i = 0; i < this.numberOfRows; i++) {
-      for (let j = 0; j < this.numberOfColumns; j++) {
-        if (this.fields[i][j].number === 0) continue;
-
-        for (let k = 1; k <= j; k++) {
-          const fieldToLeft = this.fields[i][j - k];
-          const tile = this.fields[i][j - k + 1];
-
-          const moveTileInfo = this.moveTile(tile, fieldToLeft);
-          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
-          if (!moveTileInfo.continueMovement) break;
+        for (let i = 0; i < this.numberOfColumns; i++) {
+          this.previousTileWasMerged = false;
+          for (let j = this.numberOfRows - 1; j >= 0; j--) {
+            if (this.fields[j][i].number === 0) continue;
+            for (let k = 1; k <= this.numberOfRows - 1 - j; k++) {
+              const continueMove = this.moveTile(this.fields[j + k - 1][i], this.fields[j + k][i]);
+              if (!continueMove) break;
+            }
+          }
         }
-      }
+        break;
     }
-
-    return tilesWereMoved;
   }
 
-  private moveTilesToRight(): boolean {
-    let tilesWereMoved = false;
+  private moveTile(tile: Field, nextField: Field): boolean {
+    let continueMove: boolean = false;
 
-    for (let i = 0; i < this.numberOfRows; i++) {
-      for (let j = this.numberOfColumns - 1; j >= 0; j--) {
-        if (this.fields[i][j].number === 0) continue;
-
-        for (let k = 1; k <= this.numberOfColumns - j - 1; k++) {
-          const fieldToRight = this.fields[i][j + k];
-          const tile = this.fields[i][j + k - 1];
-
-          const moveTileInfo = this.moveTile(tile, fieldToRight);
-          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
-          if (!moveTileInfo.continueMovement) break;
-        }
-      }
-    }
-
-    return tilesWereMoved;
-  }
-
-  private moveTilesUp(): boolean {
-    let tilesWereMoved = false;
-
-    for (let i = 0; i < this.numberOfColumns; i++) {
-      for (let j = 0; j < this.numberOfRows; j++) {
-        if (this.fields[j][i].number === 0) continue;
-
-        for (let k = 1; k <= j; k++) {
-          const fieldAbove = this.fields[j - k][i];
-          const tile = this.fields[j - k + 1][i];
-
-          const moveTileInfo = this.moveTile(tile, fieldAbove);
-          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
-          if (!moveTileInfo.continueMovement) break;
-        }
-      }
-    }
-
-    return tilesWereMoved;
-  }
-
-  private moveTilesDown(): boolean {
-    let tilesWereMoved = false;
-
-    for (let i = 0; i < this.numberOfColumns; i++) {
-      for (let j = this.numberOfRows - 1; j >= 0; j--) {
-        if (this.fields[j][i].number === 0) continue;
-
-        for (let k = 1; k <= this.numberOfRows - 1 - j; k++) {
-          const fieldBelow = this.fields[j + k][i];
-          const tile = this.fields[j + k - 1][i];
-
-          const moveTileInfo = this.moveTile(tile, fieldBelow);
-          if (!tilesWereMoved && moveTileInfo.tileMoved) tilesWereMoved = true;
-          if (!moveTileInfo.continueMovement) break;
-        }
-      }
-    }
-
-    return tilesWereMoved;
-  }
-
-  private moveTile(tile: Field, nextField: Field): MoveTileInfo {
     if (nextField.number === 0) {
       nextField.number = tile.number;
       tile.number = 0;
-      return { tileMoved: true, continueMovement: true };
+      continueMove = true;
+      if (!this.tilesWereMoved) this.tilesWereMoved = true;
     }
-
-    if (nextField.number === tile.number) {
+    else if (nextField.number === tile.number) {
       nextField.number += nextField.number;
       tile.number = 0;
-      return { tileMoved: true, continueMovement: false };
+      continueMove = false;
+      this.previousTileWasMerged = true;
+      if (!this.tilesWereMoved) this.tilesWereMoved = true;
     }
+    else if (this.previousTileWasMerged)
+      this.previousTileWasMerged = false;
 
-    return { tileMoved: false, continueMovement: false };
+    return continueMove;
   }
 
   private isMovePossible(): boolean {

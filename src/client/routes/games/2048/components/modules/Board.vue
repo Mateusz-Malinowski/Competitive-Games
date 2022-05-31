@@ -122,9 +122,6 @@ export default defineComponent({
       if (!movementEnabled.value) return;
 
       let direction;
-
-      store.commit("board/disableMovement");
-
       switch(keyName) {
         case "ArrowLeft":
           direction = Direction.Left;
@@ -142,6 +139,8 @@ export default defineComponent({
           return;
       }
 
+      store.commit("board/disableMovement");
+
       const tilesWereMoved = await animateTiles(direction);
       if (tilesWereMoved) {
         store.commit('board/moveTiles', direction);
@@ -156,11 +155,12 @@ export default defineComponent({
       const tilesTargetPositions: TileTargetPosition[] = [];
       const fieldsCopy = deepCopy2dArray<StoreField>(fields.value);
       let tilesWereMoved: boolean = false;
-      let previousTileWasMerged: boolean = false;
+      let previousTileWasMerged: boolean;
 
       switch (direction) {
         case Direction.Left:
-          for (let i = 0; i < numberOfRows.value; i++)
+          for (let i = 0; i < numberOfRows.value; i++) {
+            previousTileWasMerged = false;
             for (let j = 0; j < numberOfColumns.value; j++) {
               if (fieldsCopy[i][j].number === 0) continue;
               const tileTargetPosition = getTileTargetPosition(i, j);
@@ -170,9 +170,11 @@ export default defineComponent({
                 if (!continueMove) break;
               }
             }
+          }
           break;
         case Direction.Right:
-          for (let i = 0; i < numberOfRows.value; i++)
+          for (let i = 0; i < numberOfRows.value; i++) {
+            previousTileWasMerged = false;
             for (let j = numberOfColumns.value - 1; j >= 0; j--) {
               if (fieldsCopy[i][j].number === 0) continue;
               const tileTargetPosition = getTileTargetPosition(i, j);
@@ -182,9 +184,11 @@ export default defineComponent({
                 if (!continueMove) break;
               }
             }
+          }
           break;
         case Direction.Up:
-          for (let i = 0; i < numberOfColumns.value; i++)
+          for (let i = 0; i < numberOfColumns.value; i++) {
+            previousTileWasMerged = false;
             for (let j = 0; j < numberOfRows.value; j++) {
               if (fieldsCopy[j][i].number === 0) continue;
               const tileTargetPosition = getTileTargetPosition(j, i);
@@ -194,9 +198,11 @@ export default defineComponent({
                 if (!continueMove) break;
               }
             }
+          }
           break;
         case Direction.Down:
-          for (let i = 0; i < numberOfColumns.value; i++)
+          for (let i = 0; i < numberOfColumns.value; i++) {
+            previousTileWasMerged = false;
             for (let j = numberOfRows.value - 1; j >= 0; j--) {
               if (fieldsCopy[j][i].number === 0) continue;
               const tileTargetPosition = getTileTargetPosition(j, i);
@@ -206,6 +212,7 @@ export default defineComponent({
                 if (!continueMove) break;
               }
             }
+          }
           break;
       }
 
