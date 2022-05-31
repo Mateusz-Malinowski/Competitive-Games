@@ -69,6 +69,7 @@ export default defineComponent({
     const numberOfColumns = computed<number>(() => store.state.board.numberOfColumns);
     const fields = computed<StoreField[][]>(() => store.state.board.fields);
     const movementEnabled = computed<boolean>(() => store.state.board.movementEnabled);
+    const animationSpeed = computed<number>(() => store.state.board.animationSpeed);
     const boardElement = ref<HTMLDivElement>();
     const fieldStyles = ref<FieldStyle[][]>(
       initialize2dArray<FieldStyle>(
@@ -96,10 +97,7 @@ export default defineComponent({
     const tiles = ref<Tile[]>(tilesComputed.value);
     // if data from store has changed update tiles ref 
     // (computed is readonly - change in style is needed to animate)
-    watchEffect(() => {
-      console.log(store.state.board.fields);
-      tiles.value = tilesComputed.value;
-    });
+    watchEffect(() => { tiles.value = tilesComputed.value; });
 
     const adjustSize = (): void => {
       const boardDiv = boardElement.value as HTMLDivElement;
@@ -254,8 +252,6 @@ export default defineComponent({
 
     const moveTilesIntoPositions = async (tilesTargetPositions: TileTargetPosition[]): Promise<void> => {
       return new Promise<void>((resolve) => {
-        console.log('start');
-        const speed = 0.5;
         let lastTimeStamp: number | null = null;
         window.requestAnimationFrame(render);
 
@@ -267,10 +263,7 @@ export default defineComponent({
             parseFloat(tilePosition.tile.style.left) === tilePosition.left &&
             parseFloat(tilePosition.tile.style.top) === tilePosition.top
           ));
-          if (tilesInPlace) {
-            console.log('end');
-            return resolve();
-          }
+          if (tilesInPlace) return resolve();
 
           tilesTargetPositions.forEach((tilePosition) => {
             const currentLeft = parseFloat(tilePosition.tile.style.left);
@@ -279,7 +272,7 @@ export default defineComponent({
             const targetTop = tilePosition.top;
             const leftDifference = Math.abs(targetLeft - currentLeft);
             const topDifference = Math.abs(targetTop - currentTop);
-            const increase = delta * speed;
+            const increase = delta * animationSpeed.value;
 
             if (leftDifference > 0) {
               const newLeft = currentLeft > targetLeft ? currentLeft - increase : currentLeft + increase;

@@ -32,6 +32,7 @@ export default defineComponent({
       store.commit("board/initialize", {
         numberOfRows: gameSettings.numberOfRows,
         numberOfColumns: gameSettings.numberOfColumns,
+        animationSpeed: gameSettings.animationSpeed
       });
 
       store.commit("game/setGameStatus", GameStatus.Playing);

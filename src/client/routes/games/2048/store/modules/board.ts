@@ -8,6 +8,7 @@ export interface BoardState {
   numberOfColumns: number;
   fields: Field[][];
   movementEnabled: boolean;
+  animationSpeed: number;
 }
 
 export interface Field {
@@ -17,6 +18,7 @@ export interface Field {
 export interface InitializationData {
   numberOfRows: number;
   numberOfColumns: number;
+  animationSpeed: number;
 }
 
 const state = (): BoardState => ({
@@ -24,15 +26,16 @@ const state = (): BoardState => ({
   numberOfColumns: 0,
   fields: [],
   movementEnabled: false,
+  animationSpeed: 0
 });
 
 const mutations: MutationTree<BoardState> = {
-  initialize(state: BoardState, { numberOfRows, numberOfColumns }: InitializationData): void {
+  initialize(state: BoardState, { numberOfRows, numberOfColumns, animationSpeed }: InitializationData): void {
     state.numberOfRows = numberOfRows;
     state.numberOfColumns = numberOfColumns;
+    state.animationSpeed = animationSpeed;
     for (let i = 0; i < state.numberOfRows; i++) {
       state.fields.push([]);
-
       for (let j = 0; j < state.numberOfColumns; j++)
         state.fields[i][j] = { number: 0 };
     }
