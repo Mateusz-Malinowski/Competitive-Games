@@ -3,7 +3,7 @@
   <div class="wrapper wrapper-2048">
     <div class="content-block content-game">
       <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
-        <template #description>
+        <template #gameDescription>
           
         </template>
       </StartScreen>
@@ -93,10 +93,12 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @use "../../../../shared/scss/variables/measurements.scss";
+@use '../../../../shared/scss/modules/noselect';
 
 .wrapper-2048 {
   display: flex;
   justify-content: center;
+  @extend %noselect;
 
   .content-game {
     width: 800px;

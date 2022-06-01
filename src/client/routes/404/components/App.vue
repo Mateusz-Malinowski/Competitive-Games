@@ -25,6 +25,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @use '../../../shared/scss/variables/measurements';
+@use '../../../shared/scss/variables/shadows';
 
 .content-404 {
   padding: measurements.$page-spacing;
@@ -38,6 +39,7 @@ export default defineComponent({
 .img-404 {
   width: 100%;
   max-width: 800px;
+  filter: drop-shadow(shadows.$icon);
 }
 
 h2,

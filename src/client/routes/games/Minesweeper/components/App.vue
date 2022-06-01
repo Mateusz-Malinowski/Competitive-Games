@@ -3,8 +3,18 @@
   <div class="wrapper wrapper-minesweeper">
     <div class="content-block content-game">
       <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
-        <template #description>
+        <template #gameDescription>
 
+        </template>
+        <template #controls>
+          <Control>
+            <template #image><img :src="LMBPath" alt="LMB"></template>
+            <template #description>Reveal field</template>
+          </Control>
+          <Control>
+            <template #image><img :src="RMBPath" alt="RMB"></template>
+            <template #description>Place flag</template>
+          </Control>
         </template>
       </StartScreen>
       <GameModes v-if="gameStatus === GameStatus.GameMode" />
@@ -31,13 +41,15 @@ import { useStore } from "../store";
 import { GameResult, GameStatus } from "../../../../shared/store/modules/game";
 import GameOverPacket from "../../../../../global/games/Minesweeper/packets/server/GameOverPacket";
 import GameWonPacket from "../../../../../global/games/Minesweeper/packets/server/GameWonPacket";
+import Control from "../../../../shared/components/Control.vue";
 import StartScreen from "../../../../shared/components/StartScreen.vue";
+import LMBPath from "url:../../../../shared/assets/controls/LMB.svg";
+import RMBPath from "url:../../../../shared/assets/controls/RMB.svg";
 
 export default defineComponent({
-  components: { Navbar, Map, GameModes, Timer, Results, StartScreen },
+  components: { Navbar, Map, GameModes, Timer, Results, StartScreen, Control },
   setup() {
     const store = computed(() => useStore());
-
     const gameStatus = computed(() => store.value.state.game.gameStatus);
 
     const startGame = (): void => {
@@ -75,7 +87,7 @@ export default defineComponent({
       handleEndGame(packet.time, GameResult.Win);
     };
 
-    return { store, gameStatus, GameStatus, startGame };
+    return { store, gameStatus, GameStatus, startGame, LMBPath, RMBPath };
   },
   async mounted() {
     const webSocketController = new WebSocketController();

@@ -2,7 +2,7 @@
   <nav>
     <div class="navbar">
       <a href="/" class="logo">
-        <img :src="logoSrc" alt="full-logo" />
+        <img :src="logoPath" alt="full-logo" />
       </a>
       <div class="links" :class="{ dropped: isDropped }">
         <a
@@ -25,15 +25,13 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import logoPath from "url:../assets/full-logo.svg";
+import logoPath from "url:../assets/logos/full-logo.svg";
 
 import DropdownButton from "./DropdownButton.vue";
 
 export default defineComponent({
   components: { DropdownButton },
   setup() {
-    const logoSrc = ref(logoPath);
-
     const navbarLinks = ref([
       { name: "Home", href: "/" },
       { name: "Games", href: "/games" },
@@ -46,7 +44,7 @@ export default defineComponent({
       isDropped.value = !isDropped.value;
     };
 
-    return { logoSrc, navbarLinks, isDropped, dropMenu };
+    return { logoPath, navbarLinks, isDropped, dropMenu };
   },
 });
 </script>
@@ -57,6 +55,7 @@ export default defineComponent({
 @use "../scss/variables/shadows";
 @use "../scss/modules/button";
 @use "../scss/mixins/devices";
+@use '../scss/modules/noselect';
 @use 'sass:math';
 
 nav {
@@ -64,6 +63,7 @@ nav {
   position: sticky;
   top: 0;
   margin: 0 measurements.$page-spacing;
+  @extend %noselect;
 
   .navbar {
     position: relative;
@@ -87,6 +87,7 @@ nav {
 
       img {
         height: 35px;
+        filter: drop-shadow(shadows.$icon);
       }
     }
 

@@ -36,6 +36,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @use '../../../../../shared/scss/variables/measurements.scss';
 @use '../../../../../shared/scss/variables/colors.scss';
+@use '../../../../../shared/scss/variables/shadows.scss';
 @use 'sass:math';
 
 // background, text-color
@@ -58,9 +59,10 @@ hsl(280, 70%, 60%), colors.$text-light;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 5em;
+  font-size: 4.5em;
   font-weight: bold;
   font-family: monospace;
+  box-shadow: shadows.$main;
 
   &.merged {
     animation: mergeTile 0.3s ease;
@@ -72,9 +74,12 @@ hsl(280, 70%, 60%), colors.$text-light;
 }
 
 @for $i from 1 through 11 {
+  $background-color: nth($colors, 2 * $i - 1);
+  $color: nth($colors, 2 * $i);
+
   .tile.color-#{math.pow(2, $i)} {
-    background-color: nth($colors, 2 * $i - 1);
-    color: nth($colors, 2 * $i);
+    background-color: $background-color;
+    color: $color;
   }
 }
 

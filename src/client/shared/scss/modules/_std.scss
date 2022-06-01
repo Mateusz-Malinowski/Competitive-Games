@@ -1,9 +1,11 @@
 @use "../variables/colors";
+@use "../variables/shadows";
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     color: colors.$text;
     background-color: colors.$background;
+    text-shadow: shadows.$text;
     margin: 0;
 
     * {
