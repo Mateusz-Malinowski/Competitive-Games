@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" :class="className">
+  <div class="tile" :class="[colorClass, { merged: isMerged, new: isNew }]">
     <span>{{ number }}</span>
   </div>
 </template>
@@ -7,19 +7,27 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 
-type ClassName = `color-${number}`;
+type ColorClass = `color-${number}`;
 
 export default defineComponent({
   props: {
     number: {
       required: true,
       type: Number,
+    },
+    isMerged: {
+      required: true,
+      type: Boolean
+    },
+    isNew: {
+      required: true,
+      type: Boolean
     }
   },
   setup(props) {
-    const className = computed<ClassName>(() => `color-${props.number}`);
+    const colorClass = computed<ColorClass>(() => `color-${props.number}`);
 
-    return { className };
+    return { colorClass };
   },
 })
 </script>
@@ -52,13 +60,45 @@ colors.$tertiary, colors.$text-dark;
   align-items: center;
   font-size: 5em;
   font-weight: bold;
-  font-family: monospace
+  font-family: monospace;
+
+  &.merged {
+    animation: mergeTile 0.3s ease;
+  }
+
+  &.new {
+    animation: createTile 0.3s ease;
+  }
 }
 
 @for $i from 1 through 11 {
   .tile.color-#{math.pow(2, $i)} {
     background-color: nth($colors, 2 * $i - 1);
     color: nth($colors, 2 * $i);
+  }
+}
+
+@keyframes mergeTile {
+  0% {
+    transform: scale(1.0);
+  }
+
+  50% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1.0);
+  }
+}
+
+@keyframes createTile {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1.0);
   }
 }
 </style>

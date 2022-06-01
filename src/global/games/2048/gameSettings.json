@@ -4,5 +4,5 @@
     "initialNumbers": [2, 4],
     "firstNumbersCount": 2,
     "winThreshold": 256,
-    "animationSpeed": 3.5
+    "animationSpeed": 0.000015
 }

@@ -13,6 +13,8 @@ export interface BoardState {
 
 export interface Field {
   number: number;
+  isMerged: boolean;
+  isNew: boolean;
 }
 
 export interface InitializationData {
@@ -37,11 +39,13 @@ const mutations: MutationTree<BoardState> = {
     for (let i = 0; i < state.numberOfRows; i++) {
       state.fields.push([]);
       for (let j = 0; j < state.numberOfColumns; j++)
-        state.fields[i][j] = { number: 0 };
+        state.fields[i][j] = { number: 0, isMerged: false, isNew: false };
     }
   },
   addNewTile(state: BoardState, newTilePacket: NewTilePacket): void {
-    state.fields[newTilePacket.row][newTilePacket.column].number = newTilePacket.number;
+    const field = state.fields[newTilePacket.row][newTilePacket.column];
+    field.number = newTilePacket.number;
+    field.isNew = true;
   },
   enableMovement(state: BoardState): void {
     state.movementEnabled = true;
@@ -53,6 +57,12 @@ const mutations: MutationTree<BoardState> = {
     const fieldsCopy = deepCopy2dArray<Field>(state.fields);
     let previousTileWasMerged: boolean;
 
+    for (let i = 0; i < state.numberOfRows; i++)
+      for (let j = 0; j < state.numberOfColumns; j++) {
+        fieldsCopy[i][j].isMerged = false;
+        fieldsCopy[i][j].isNew = false;
+      }
+
     switch (direction) {
       case Direction.Left:
         for (let i = 0; i < state.numberOfRows; i++) {
@@ -60,8 +70,13 @@ const mutations: MutationTree<BoardState> = {
           for (let j = 0; j < state.numberOfColumns; j++) {
             if (fieldsCopy[i][j].number === 0) continue;
             for (let k = 1; k <= j; k++) {
-              const continueMove = predictTileMovement(fieldsCopy[i][j - k + 1], fieldsCopy[i][j - k]);
-              if (!continueMove) break;
+              const nextField = fieldsCopy[i][j - k];
+              const tilePrediction = fieldsCopy[i][j - k + 1];
+              const continueMove = predictTileMovement(tilePrediction, nextField);
+              if (!continueMove) {
+                if (previousTileWasMerged) nextField.isMerged = true;
+                break;
+              }
             }
           }
         }
@@ -72,8 +87,13 @@ const mutations: MutationTree<BoardState> = {
           for (let j = state.numberOfColumns - 1; j >= 0; j--) {
             if (fieldsCopy[i][j].number === 0) continue;
             for (let k = 1; k <= state.numberOfColumns - 1 - j; k++) {
-              const continueMove = predictTileMovement(fieldsCopy[i][j + k - 1], fieldsCopy[i][j + k]);
-              if (!continueMove) break;
+              const nextField = fieldsCopy[i][j + k];
+              const tilePrediction = fieldsCopy[i][j + k - 1];
+              const continueMove = predictTileMovement(tilePrediction, nextField);
+              if (!continueMove) {
+                if (previousTileWasMerged) nextField.isMerged = true;
+                break;
+              }
             }
           }
         }
@@ -84,8 +104,13 @@ const mutations: MutationTree<BoardState> = {
           for (let j = 0; j < state.numberOfRows; j++) {
             if (fieldsCopy[j][i].number === 0) continue;
             for (let k = 1; k <= j; k++) {
-              const continueMove = predictTileMovement(fieldsCopy[j - k + 1][i], fieldsCopy[j - k][i]);
-              if (!continueMove) break;
+              const nextField = fieldsCopy[j - k][i];
+              const tilePrediction = fieldsCopy[j - k + 1][i];
+              const continueMove = predictTileMovement(tilePrediction, nextField);
+              if (!continueMove) {
+                if (previousTileWasMerged) nextField.isMerged = true;
+                break;
+              }
             }
           }
         }
@@ -96,8 +121,13 @@ const mutations: MutationTree<BoardState> = {
           for (let j = state.numberOfRows - 1; j >= 0; j--) {
             if (fieldsCopy[j][i].number === 0) continue;
             for (let k = 1; k <= state.numberOfRows - 1 - j; k++) {
-              const continueMove = predictTileMovement(fieldsCopy[j + k - 1][i], fieldsCopy[j + k][i]);
-              if (!continueMove) break;
+              const nextField = fieldsCopy[j + k][i];
+              const tilePrediction = fieldsCopy[j + k - 1][i];
+              const continueMove = predictTileMovement(tilePrediction, nextField);
+              if (!continueMove) {
+                if (previousTileWasMerged) nextField.isMerged = true;
+                break;
+              }
             }
           }
         }

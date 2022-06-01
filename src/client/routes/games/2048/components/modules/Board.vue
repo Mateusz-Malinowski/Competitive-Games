@@ -9,9 +9,11 @@
     </div>
     <Tile
       v-for="tile in tiles"
-      :key="`${tile.row}${tile.column}`"
+      :key="`${tile.row}${tile.column}${tile.number}`"
       :style="tile.style"
       :number="tile.number"
+      :isMerged="tile.isMerged"
+      :isNew="tile.isNew"
     />
   </div>
   <KeyboardEvents @keyup="handleKeyUp" />
@@ -44,6 +46,8 @@ interface Tile {
   column: number;
   number: number;
   style: TileStyle;
+  isMerged: boolean;
+  isNew: boolean;
 }
 
 interface TileStyle {
@@ -57,14 +61,16 @@ interface TileTargetPosition {
   tile: Tile;
   left: number;
   top: number;
+  leftDifference: number;
+  topDifference: number;
 }
 
 export default defineComponent({
   components: { Field, Tile, KeyboardEvents },
   setup() {
     const store = useStore();
-
     const borderWidthPx = 10;
+
     const numberOfRows = computed<number>(() => store.state.board.numberOfRows);
     const numberOfColumns = computed<number>(() => store.state.board.numberOfColumns);
     const fields = computed<StoreField[][]>(() => store.state.board.fields);
@@ -89,6 +95,8 @@ export default defineComponent({
               column: j,
               number: field.number,
               style: Object.assign({}, fieldStyles.value[i][j]),
+              isMerged: field.isMerged,
+              isNew: field.isNew
             });
         }
       }
@@ -164,7 +172,11 @@ export default defineComponent({
               const tileTargetPosition = getTileTargetPosition(i, j);
               for (let k = 1; k <= j; k++) {
                 const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[i][j - k + 1], fieldsCopy[i][j - k]);
-                if (wasMoved) tileTargetPosition.left = parseFloat(fieldStyles.value[i][j - k].left);
+                if (wasMoved) {
+                  const newLeft = parseFloat(fieldStyles.value[i][j - k].left);
+                  tileTargetPosition.leftDifference += Math.abs(tileTargetPosition.left - newLeft);
+                  tileTargetPosition.left = newLeft;
+                }
                 if (!continueMove) break;
               }
             }
@@ -178,7 +190,11 @@ export default defineComponent({
               const tileTargetPosition = getTileTargetPosition(i, j);
               for (let k = 1; k <= numberOfColumns.value - 1 - j; k++) {
                 const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[i][j + k - 1], fieldsCopy[i][j + k]);
-                if (wasMoved) tileTargetPosition.left = parseFloat(fieldStyles.value[i][j + k].left);
+                if (wasMoved) {
+                  const newLeft = parseFloat(fieldStyles.value[i][j + k].left);
+                  tileTargetPosition.leftDifference += Math.abs(tileTargetPosition.left - newLeft);
+                  tileTargetPosition.left = newLeft;
+                }
                 if (!continueMove) break;
               }
             }
@@ -192,7 +208,11 @@ export default defineComponent({
               const tileTargetPosition = getTileTargetPosition(j, i);
               for (let k = 1; k <= j; k++) {
                 const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[j - k + 1][i], fieldsCopy[j - k][i]);
-                if (wasMoved) tileTargetPosition.top = parseFloat(fieldStyles.value[j - k][i].top);
+                if (wasMoved) {
+                  const newTop = parseFloat(fieldStyles.value[j - k][i].top);
+                  tileTargetPosition.topDifference += Math.abs(tileTargetPosition.top - newTop);
+                  tileTargetPosition.top = newTop;
+                }
                 if (!continueMove) break;
               }
             }
@@ -206,7 +226,11 @@ export default defineComponent({
               const tileTargetPosition = getTileTargetPosition(j, i);
               for (let k = 1; k <= numberOfRows.value - 1 - j; k++) {
                 const { wasMoved, continueMove } = predictTileMovement(fieldsCopy[j + k - 1][i], fieldsCopy[j + k][i]);
-                if (wasMoved) tileTargetPosition.top = parseFloat(fieldStyles.value[j + k][i].top);
+                if (wasMoved) {
+                  const newTop = parseFloat(fieldStyles.value[j + k][i].top);
+                  tileTargetPosition.topDifference += Math.abs(tileTargetPosition.top - newTop);
+                  tileTargetPosition.top = newTop;
+                }
                 if (!continueMove) break;
               }
             }
@@ -220,7 +244,13 @@ export default defineComponent({
 
       function getTileTargetPosition(row: number, column: number): TileTargetPosition {
         const tile = tiles.value.find((element) => (element.row === row && element.column === column)) as Tile;
-        const tileTargetPosition = { tile: tile, left: parseFloat(tile.style.left), top: parseFloat(tile.style.top) };
+        const tileTargetPosition = { 
+          tile: tile, 
+          left: parseFloat(tile.style.left), 
+          top: parseFloat(tile.style.top), 
+          leftDifference: 0,
+          topDifference: 0
+        };
         tilesTargetPositions.push(tileTargetPosition);
         return tileTargetPosition;
       }
@@ -252,6 +282,7 @@ export default defineComponent({
 
     const moveTilesIntoPositions = async (tilesTargetPositions: TileTargetPosition[]): Promise<void> => {
       return new Promise<void>((resolve) => {
+        const boardDiv = boardElement.value as HTMLDivElement;
         let lastTimeStamp: number | null = null;
         window.requestAnimationFrame(render);
 
@@ -272,14 +303,15 @@ export default defineComponent({
             const targetTop = tilePosition.top;
             const leftDifference = Math.abs(targetLeft - currentLeft);
             const topDifference = Math.abs(targetTop - currentTop);
-            const increase = delta * animationSpeed.value;
 
             if (leftDifference > 0) {
+              const increase = delta * animationSpeed.value * boardDiv.clientWidth * tilePosition.leftDifference;
               const newLeft = currentLeft > targetLeft ? currentLeft - increase : currentLeft + increase;
               tilePosition.tile.style.left = (increase > leftDifference ? tilePosition.left : newLeft) + "px";
             }
 
             if (topDifference > 0) {
+              const increase = delta * animationSpeed.value * boardDiv.clientHeight * tilePosition.topDifference;
               const newTop = currentTop > targetTop ? currentTop - increase : currentTop + increase;
               tilePosition.tile.style.top = (increase > topDifference ? tilePosition.top : newTop) + "px";
             }
