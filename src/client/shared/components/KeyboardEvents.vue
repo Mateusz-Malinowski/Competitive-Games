@@ -18,11 +18,9 @@ export default defineComponent({
     return { handleKeyUp };
   },
   mounted() {
-    console.log("created keyboard events");
     window.addEventListener("keyup", this.handleKeyUp);
   },
   unmounted() {
-    console.log("destroyed keyboard events");
     window.removeEventListener("keyup", this.handleKeyUp);
   },
 });

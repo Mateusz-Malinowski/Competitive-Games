@@ -22,13 +22,14 @@ import NewTilePacket from "../../../../../global/games/2048/packets/server/NewTi
 import Navbar from "../../../../shared/components/Navbar.vue";
 import WebSocketController from "../api/WebSocketController";
 import { useStore } from "../store";
-import { GameStatus } from "../../../../shared/store/modules/game";
+import { GameResult, GameStatus } from "../../../../shared/store/modules/game";
 import Board from "./modules/Board.vue";
 import StartScreen from "../../../../shared/components/StartScreen.vue";
 import Timer from "../../../../shared/components/Timer.vue";
 import gameSettings from "../../../../../global/games/2048/gameSettings.json";
 import StartGamePacket from "../../../../../global/games/2048/packets/client/StartGamePacket";
 import Results from "../../../../shared/components/Results.vue";
+import GameOverPacket from "../../../../../global/games/2048/packets/server/GameOverPacket";
 
 export default defineComponent({
   components: { Navbar, Board, StartScreen, Timer, Results },
@@ -36,6 +37,19 @@ export default defineComponent({
     const store = computed(() => useStore());
 
     const gameStatus = computed<GameStatus>(() => store.value.state.game.gameStatus);
+
+    WebSocketController.handleNewTilePacket = (packet: NewTilePacket) => {
+      store.value.commit("board/addNewTile", packet);
+      store.value.commit("board/enableMovement");
+    };
+
+    WebSocketController.handleGameOverPacket = (packet: GameOverPacket) => {
+      endGame(packet.time, GameResult.Defeat);
+    }
+
+    WebSocketController.handleGameWonPacket = (packet: GameOverPacket) => {
+      endGame(packet.time, GameResult.Win);
+    }
 
     const startGame = (): void => {
       store.value.commit("board/initialize", {
@@ -52,10 +66,14 @@ export default defineComponent({
       store.value.dispatch('timer/start');
     };
 
-    WebSocketController.handleNewTilePacket = (packet: NewTilePacket) => {
-      store.value.commit("board/addNewTile", packet);
-      store.value.commit("board/enableMovement");
-    };
+    const endGame = (time: number, result: GameResult): void => {
+      store.value.dispatch("timer/stop");
+      store.value.commit("timer/setTotalMiliseconds", time);
+      store.value.commit("game/setGameResult", result);
+      setTimeout(() => {
+        store.value.commit("game/setGameStatus", GameStatus.Results);
+      }, 3000);
+    }
 
     return { store, gameStatus, GameStatus, startGame };
   },
