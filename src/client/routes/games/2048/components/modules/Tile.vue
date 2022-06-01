@@ -39,18 +39,18 @@ export default defineComponent({
 @use 'sass:math';
 
 // background, text-color
-$colors: 
-rgb(210, 210, 210), colors.$text-dark,
-rgb(210, 210, 130), colors.$text-dark,
-rgb(255, 154, 66), colors.$text-light,
-rgb(255, 119, 0), colors.$text-light,
-rgb(255, 70, 70), colors.$text-light,
-colors.$secondary, colors.$text-light,
-rgb(190, 192, 83), colors.$text-light,
-rgb(197, 172, 8), colors.$text-light,
-rgb(67, 110, 229), colors.$text-light,
-rgb(43, 20, 222), colors.$text-light,
-colors.$tertiary, colors.$text-dark;
+$colors:
+hsl(60, 0%, 80%), colors.$text-dark,
+hsl(60, 50%, 80%), colors.$text-dark,
+hsl(30, 100%, 70%), colors.$text-dark,
+hsl(30, 100%, 50%), colors.$text-light,
+hsl(0, 75%, 60%), colors.$text-light,
+hsl(0, 85%, 50%), colors.$text-light,
+hsl(100, 60%, 70%), colors.$text-dark,
+hsl(100, 80%, 50%), colors.$text-dark,
+hsl(220, 60%, 60%), colors.$text-light,
+hsl(220, 90%, 50%), colors.$text-light,
+hsl(280, 70%, 60%), colors.$text-light;
 
 .tile {
   position: absolute;
