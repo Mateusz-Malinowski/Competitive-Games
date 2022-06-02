@@ -3,6 +3,6 @@
     "numberOfColumns": 4,
     "initialNumbers": [2, 4],
     "firstNumbersCount": 2,
-    "winThreshold": 256,
+    "winThreshold": 2048,
     "animationSpeed": 0.000015
 }

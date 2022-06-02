@@ -1,19 +1,22 @@
 <template>
   <div class="start-screen">
-    <div class="content">
-      <div class="description-game">
+    <div class="content-text">
+      <h2 class="name-game">
+        <slot name="gameName">Game Name</slot>
+      </h2>
+      <p class="description-game">
         <slot name="gameDescription">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi voluptates
-          saepe repellendus at minus excepturi, enim molestias quas amet
-          perferendis! Itaque cumque tempore odit similique facere repudiandae
-          nesciunt voluptatibus ab? Lorem ipsum dolor sit amet, consectetur
-          adipisicing elit. Iure aperiam consequuntur laborum exercitationem.
-          Quisquam iusto nesciunt error officiis amet voluptas.
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi
+          voluptates saepe repellendus at minus excepturi, enim molestias quas
+          amet perferendis! Itaque cumque tempore odit similique facere
+          repudiandae nesciunt voluptatibus ab? Lorem ipsum dolor sit amet,
+          consectetur adipisicing elit. Iure aperiam consequuntur laborum
+          exercitationem. Quisquam iusto nesciunt error officiis amet voluptas.
         </slot>
-      </div>
-      <div class="controls">
-        <slot name="controls"></slot>
-      </div>
+      </p>
+    </div>
+    <div class="controls">
+      <slot name="controls"></slot>
     </div>
     <AnimatedButton class="button-play" @click="handlePlay">Play</AnimatedButton>
   </div>
@@ -28,16 +31,16 @@ export default defineComponent({
   props: {
     handlePlay: {
       required: true,
-      type: Function as () => void
-    }
+      type: Function as () => void,
+    },
   },
   setup() {},
 });
 </script>
 
 <style lang="scss" scoped>
-@use '../scss/variables/measurements.scss';
-@use 'sass:math';
+@use "../scss/variables/measurements.scss";
+@use "sass:math";
 
 .start-screen {
   display: flex;
@@ -45,9 +48,18 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
 
-  .description-game {
-    font-size: 1.5em;
-    text-align: justify;
+  .content-text {
+    .name-game {
+      text-align: center;
+      margin-bottom: math.div(measurements.$page-spacing, 2);
+      font-size: 2.5rem;
+    }
+
+    .description-game {
+      margin: 0;
+      font-size: 1.2rem;
+      text-align: justify;
+    }
   }
 
   .controls {

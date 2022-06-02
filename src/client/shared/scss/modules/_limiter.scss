@@ -1,0 +1,6 @@
+@use '../mixins/devices';
+
+.limiter {
+    max-width: devices.$large-laptop-width;
+    margin: auto;
+}

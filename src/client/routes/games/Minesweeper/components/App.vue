@@ -1,28 +1,39 @@
 <template>
-  <Navbar />
-  <div class="wrapper wrapper-minesweeper">
-    <div class="content-block content-game">
-      <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
-        <template #gameDescription>
-
-        </template>
-        <template #controls>
-          <Control>
-            <template #image><img :src="LMBPath" alt="LMB"></template>
-            <template #description>Reveal field</template>
-          </Control>
-          <Control>
-            <template #image><img :src="RMBPath" alt="RMB"></template>
-            <template #description>Place flag</template>
-          </Control>
-        </template>
-      </StartScreen>
-      <GameModes v-if="gameStatus === GameStatus.GameMode" />
-      <Map v-if="gameStatus === GameStatus.Playing" />
-      <Results :store="store" v-if="gameStatus === GameStatus.Results" />
-    </div>
-    <div class="content-block content-timer">
-      <Timer :store="store" />
+  <div class="limiter">
+    <Navbar />
+    <div class="wrapper wrapper-minesweeper">
+      <div class="content-block content-game">
+        <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
+          <template #gameName>Minesweeper</template>
+          <template #gameDescription>
+            Welcome to Minesweeper game! Your objective is to reveal all fields that don't contain 
+            a hidden bomb. First reveal is always safe. Use numbers displayed in some of the revealed 
+            fields to deduce further squares that are safe to reveal. The number indicates a count of bombs 
+            hidden in the adjacent fields (i.e. squares that are next to the number - also diagonally). 
+            Use flags to mark fields containing a bomb (you don't have use flags to win the game). 
+            Be careful, have fun and don't forget to be fast!
+          </template>
+          <template #controls>
+            <Control>
+              <template #image><img :src="LMBPath" alt="LMB"></template>
+              <template #description>Reveal field</template>
+            </Control>
+            <Control>
+              <template #image><img :src="RMBPath" alt="RMB"></template>
+              <template #description>Place/Take flag</template>
+            </Control>
+          </template>
+        </StartScreen>
+        <GameModes v-if="gameStatus === GameStatus.GameMode" />
+        <Map v-if="gameStatus === GameStatus.Playing" />
+        <Results :store="store" v-if="gameStatus === GameStatus.Results" />
+      </div>
+      <div 
+        class="content-block content-timer"
+        v-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Results"
+      >
+        <Timer :store="store" />
+      </div>
     </div>
   </div>
 </template>

@@ -26,13 +26,14 @@ export default defineComponent({
   align-items: center;
 
   .description {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: bold;
     font-family: monospace;
     margin-bottom: math.div(measurements.$page-spacing, 2);
   }
 
   :slotted(img) {
-    height: 96px;
+    height: 120px;
     filter: drop-shadow(shadows.$icon);
   }
 }

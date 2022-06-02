@@ -7,13 +7,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1024"
+   width="708.61902"
    height="1024"
-   viewBox="0 0 270.93333 270.93333"
+   viewBox="0 0 187.48878 270.93333"
    version="1.1"
    id="svg8"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="LMB.svg">
+   sodipodi:docname="RMB-src.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -27,7 +27,7 @@
      inkscape:cx="481.81514"
      inkscape:cy="589.19641"
      inkscape:document-units="mm"
-     inkscape:current-layer="g17"
+     inkscape:current-layer="layer2"
      inkscape:document-rotation="0"
      showgrid="false"
      fit-margin-top="0"
@@ -59,39 +59,35 @@
      inkscape:label="content">
     <g
        style="stroke-width:0.46875"
-       transform="matrix(0.56444444,0,0,0.56444444,-9.03111,-9.03111)"
+       transform="matrix(0.56444444,0,0,0.56444444,-50.753386,-9.03111)"
        id="g17">
-	<path
-   style="stroke-width:0;fill:#dcdcdc;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-   fill="#020202"
-   d="m 284.5,182 c 0,15.74 -12.76,28.5 -28.5,28.5 v 0 c -15.74,0 -28.5,-12.76 -28.5,-28.5 v -49 c 0,-15.74 12.76,-28.5 28.5,-28.5 v 0 c 15.74,0 28.5,12.76 28.5,28.5 z"
-   id="path7" />
-
-	<g
-   style="stroke-width:0.46875"
-   id="g15">
-		<path
-   style="fill:#b80f0a;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
-   fill="#020202"
-   d="m 274,88.035 c 15.071,6.217 25.557,19.987 25.557,35.988 v 67.953 c 0,16.001 -10.485,29.771 -25.557,35.988 V 264.5 H 421 V 141.806 C 421,72.325 362.797,16 291,16 h -17 z"
-   id="path9" />
-
-		<path
-   style="fill:#dcdcdc;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
-   fill="#020202"
-   d="m 91,275 v 95.193 C 91,439.675 149.203,496 221,496 h 70 c 71.797,0 130,-56.325 130,-125.807 V 275 Z"
-   id="path11" />
-
-		<path
-   inkscape:label="path13"
-   style="fill:#dcdcdc;fill-opacity:1;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
-   fill="#020202"
-   d="m 238,264.5 v -36.535 c -15.071,-6.217 -25.557,-19.987 -25.557,-35.988 v -67.953 c 0,-16.001 10.485,-29.771 25.557,-35.988 V 16 H 221 C 149.203,16 91,72.325 91,141.806 V 264.5 Z"
-   id="path13" />
-
-	</g>
-
-</g>
+      <path
+         style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:7.03125;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         fill="#020202"
+         d="m 284.5,182 c 0,15.74 -12.76,28.5 -28.5,28.5 v 0 c -15.74,0 -28.5,-12.76 -28.5,-28.5 v -49 c 0,-15.74 12.76,-28.5 28.5,-28.5 v 0 c 15.74,0 28.5,12.76 28.5,28.5 z"
+         id="path7" />
+      <g
+         style="stroke:#000000;stroke-width:7.13613;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         id="g15"
+         transform="matrix(0.98525471,0,0,0.98535085,3.7747943,3.7501824)">
+        <path
+           style="fill:#b80f0a;fill-opacity:1;stroke:#000000;stroke-width:7.13613;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+           fill="#020202"
+           d="m 274,88.035 c 15.071,6.217 25.557,19.987 25.557,35.988 v 67.953 c 0,16.001 -10.485,29.771 -25.557,35.988 V 264.5 H 421 V 141.806 C 421,72.325 362.797,16 291,16 h -17 z"
+           id="path9" />
+        <path
+           style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:7.13613;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+           fill="#020202"
+           d="m 91,275 v 95.193 C 91,439.675 149.203,496 221,496 h 70 c 71.797,0 130,-56.325 130,-125.807 V 275 Z"
+           id="path11" />
+        <path
+           inkscape:label="path13"
+           style="fill:#dcdcdc;fill-opacity:1;stroke:#000000;stroke-width:7.13613;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+           fill="#020202"
+           d="m 238,264.5 v -36.535 c -15.071,-6.217 -25.557,-19.987 -25.557,-35.988 v -67.953 c 0,-16.001 10.485,-29.771 25.557,-35.988 V 16 H 221 C 149.203,16 91,72.325 91,141.806 V 264.5 Z"
+           id="path13" />
+      </g>
+    </g>
   </g>
   <inkscape:templateinfo>
     <inkscape:name>Dark Canvas</inkscape:name>

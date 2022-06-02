@@ -87,7 +87,7 @@ export default defineComponent({
 $background-color-unrevealed: rgb(30, 30, 30);
 $background-color-revealed: rgb(50, 50, 50);
 $clicked-mine-color: rgb(255, 0, 0);
-$number-colors: rgb(0, 0, 0), rgb(255, 255, 255), rgb(0, 255, 255),
+$number-colors: rgb(230, 230, 230), rgb(255, 120, 0), rgb(0, 255, 255),
   rgb(255, 0, 255), rgb(255, 255, 0), rgb(0, 0, 255), rgb(0, 255, 0),
   rgb(255, 0, 0);
 
