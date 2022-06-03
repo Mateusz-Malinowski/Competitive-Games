@@ -37,7 +37,7 @@ export default defineComponent({
     const adjustFieldStyle = () => {
       const mapDiv = mapElement.value as HTMLDivElement;
       
-      // fieldStyle.value = {};
+      fieldStyle.value = {};
       window.setTimeout(() => {
         const fieldWidth = mapDiv.clientWidth / numberOfColumns.value;
         const fieldHeight = fieldWidth;
