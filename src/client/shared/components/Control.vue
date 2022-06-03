@@ -33,7 +33,7 @@ export default defineComponent({
   }
 
   :slotted(img) {
-    height: 120px;
+    height: 150px;
     filter: drop-shadow(shadows.$icon);
   }
 }

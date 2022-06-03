@@ -2,11 +2,8 @@
   <div class="limiter">
     <Navbar />
     <div class="wrapper wrapper-2048">
-      <div class="content-block content-game">
-        <StartScreen
-          v-if="gameStatus === GameStatus.Start"
-          :handlePlay="startGame"
-        >
+      <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
+        <StartScreen :handlePlay="startGame">
           <template #gameName>2048</template>
           <template #gameDescription>
             Welcome to 2048! Your goal is to reach the tile with the number 2048. 
@@ -23,14 +20,20 @@
             </Control>
           </template>
         </StartScreen>
-        <Board v-if="gameStatus === GameStatus.Playing" />
-        <Results :store="store" v-if="gameStatus === GameStatus.Results" />
       </div>
-      <div
-        class="content-block content-timer"
-        v-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Results"
-      >
-        <Timer :store="store" />
+      <template v-if="gameStatus === GameStatus.Playing">
+        <div class="content-block content-game-info">
+          
+        </div>
+        <div class="content-block content-game">
+          <Board />
+        </div>
+        <div class="content-block content-timer">
+          <Timer :store="store" />
+        </div>
+      </template>
+      <div v-if="gameStatus === GameStatus.Results" class="content-block content-results">
+        <Results :store="store" v-if="gameStatus === GameStatus.Results" />
       </div>
     </div>
   </div>
@@ -122,50 +125,33 @@ export default defineComponent({
 
 .wrapper-2048 {
   display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-
-  @include devices.desktop {
-    justify-content: center;
-    align-items: flex-start;
-    flex-direction: row;
-  }
-
+  align-items: flex-start;
   @extend %noselect;
 
-  .content-game {
+  > .content-block {
+    margin-left: measurements.$page-spacing;
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
+  .content-start, .content-results {
     display: flex;
+    width: 100%;
+  }
 
-    @include devices.phone {
-      width: 300px + measurements.$page-spacing * 2;
-      height: 300px + measurements.$page-spacing * 2;
-    }
+  .content-game-info, .content-timer {
+    flex: 1 1 0;
+  }
 
-    @include devices.tablet {
-      width: 400px + measurements.$page-spacing * 2;
-      height: 400px + measurements.$page-spacing * 2;
-    }
-
-    @include devices.laptop {
-      width: 500px + measurements.$page-spacing * 2;
-      height: 500px + measurements.$page-spacing * 2;
-    }
-
-    @include devices.desktop {
-      width: 550px + measurements.$page-spacing * 2;
-      height: 550px + measurements.$page-spacing * 2;
-    }
+  .content-game {
+    flex: 2 1 0;
   }
 
   .content-timer {
-    display: flex;
-    margin-bottom: measurements.$page-spacing;
-    font-size: 3em;
-
-    @include devices.desktop {
-      margin-left: measurements.$page-spacing;
-      margin-bottom: 0;
-    }
+    text-align: center;
+    font-size: 2rem;
   }
 }
 </style>

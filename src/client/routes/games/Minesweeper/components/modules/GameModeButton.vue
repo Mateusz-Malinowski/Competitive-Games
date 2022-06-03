@@ -42,6 +42,7 @@ export default defineComponent({
       store.commit("map/initialize", {
         numberOfRows: props.numberOfRows,
         numberOfColumns: props.numberOfColumns,
+        numberOfMines: props.numberOfMines,
       });
       store.commit("game/setGameStatus", GameStatus.Playing);
       const startGamePacket = new StartGamePacket(id);

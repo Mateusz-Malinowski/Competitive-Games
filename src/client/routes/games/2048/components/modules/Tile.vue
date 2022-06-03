@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" :class="[colorClass, { merged: isMerged, new: isNew }]">
+  <div class="tile" :class="[numberClass, { merged: isMerged, new: isNew }]">
     <span>{{ number }}</span>
   </div>
 </template>
@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 
-type ColorClass = `color-${number}`;
+type NumberClass = `number-${number}`;
 
 export default defineComponent({
   props: {
@@ -25,9 +25,9 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const colorClass = computed<ColorClass>(() => `color-${props.number}`);
+    const numberClass = computed<NumberClass>(() => `number-${props.number}`);
 
-    return { colorClass };
+    return { numberClass };
   },
 })
 </script>
@@ -59,7 +59,7 @@ hsl(280, 70%, 60%), colors.$text-light;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 4.5em;
+  font-size: 4rem;
   font-weight: bold;
   font-family: monospace;
   box-shadow: shadows.$main;
@@ -76,10 +76,15 @@ hsl(280, 70%, 60%), colors.$text-light;
 @for $i from 1 through 11 {
   $background-color: nth($colors, 2 * $i - 1);
   $color: nth($colors, 2 * $i);
+  $number: math.pow(2, $i);
 
-  .tile.color-#{math.pow(2, $i)} {
+  .tile.number-#{$number} {
     background-color: $background-color;
     color: $color;
+
+    @if $number >= 1000 {
+      font-size: 3rem;
+    }
   }
 }
 

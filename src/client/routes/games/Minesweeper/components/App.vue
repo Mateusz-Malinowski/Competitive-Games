@@ -2,37 +2,47 @@
   <div class="limiter">
     <Navbar />
     <div class="wrapper wrapper-minesweeper">
-      <div class="content-block content-game">
-        <StartScreen v-if="gameStatus === GameStatus.Start" :handlePlay="startGame">
+      <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
+        <StartScreen :handlePlay="startGame">
           <template #gameName>Minesweeper</template>
           <template #gameDescription>
-            Welcome to Minesweeper game! Your objective is to reveal all fields that don't contain 
-            a hidden bomb. First reveal is always safe. Use numbers displayed in some of the revealed 
-            fields to deduce further squares that are safe to reveal. The number indicates a count of bombs 
-            hidden in the adjacent fields (i.e. squares that are next to the number - also diagonally). 
-            Use flags to mark fields containing a bomb (you don't have use flags to win the game). 
-            Be careful, have fun and don't forget to be fast!
+            Welcome to Minesweeper game! Your objective is to reveal all fields
+            that don't contain a hidden bomb. First reveal is always safe. Use
+            numbers displayed in some of the revealed fields to deduce further
+            squares that are safe to reveal. The number indicates a count of
+            bombs hidden in the adjacent fields (i.e. squares that are next to
+            the number - also diagonally). Use flags to mark fields containing a
+            bomb (you don't have use flags to win the game). Be careful, have
+            fun and don't forget to be fast!
           </template>
           <template #controls>
             <Control>
-              <template #image><img :src="LMBPath" alt="LMB"></template>
+              <template #image><img :src="LMBPath" alt="LMB" /></template>
               <template #description>Reveal field</template>
             </Control>
             <Control>
-              <template #image><img :src="RMBPath" alt="RMB"></template>
+              <template #image><img :src="RMBPath" alt="RMB" /></template>
               <template #description>Place/Take flag</template>
             </Control>
           </template>
         </StartScreen>
-        <GameModes v-if="gameStatus === GameStatus.GameMode" />
-        <Map v-if="gameStatus === GameStatus.Playing" />
-        <Results :store="store" v-if="gameStatus === GameStatus.Results" />
       </div>
-      <div 
-        class="content-block content-timer"
-        v-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Results"
-      >
-        <Timer :store="store" />
+      <div v-if="gameStatus === GameStatus.GameMode" class="content-block content-game-modes">
+        <GameModes />
+      </div>
+      <template v-if="gameStatus === GameStatus.Playing">
+        <div class="content-block content-game-info">
+          <MapInfo />
+        </div>
+        <div class="content-block content-game">
+          <Map />
+        </div>
+        <div class="content-block content-timer">
+          <Timer :store="store" />
+        </div>
+      </template>
+      <div v-if="gameStatus === GameStatus.Results" class="content-block content-results">
+        <Results :store="store" />
       </div>
     </div>
   </div>
@@ -56,16 +66,26 @@ import Control from "../../../../shared/components/Control.vue";
 import StartScreen from "../../../../shared/components/StartScreen.vue";
 import LMBPath from "url:../../../../shared/assets/controls/LMB.svg";
 import RMBPath from "url:../../../../shared/assets/controls/RMB.svg";
+import MapInfo from "./modules/MapInfo.vue";
 
 export default defineComponent({
-  components: { Navbar, Map, GameModes, Timer, Results, StartScreen, Control },
+  components: {
+    Navbar,
+    Map,
+    GameModes,
+    Timer,
+    Results,
+    StartScreen,
+    Control,
+    MapInfo,
+  },
   setup() {
     const store = computed(() => useStore());
     const gameStatus = computed(() => store.value.state.game.gameStatus);
 
     const startGame = (): void => {
       store.value.commit("game/setGameStatus", GameStatus.GameMode);
-    }
+    };
 
     const stopAndCorrectTimer = (serverTime: number): void => {
       store.value.dispatch("timer/stop");
@@ -84,8 +104,9 @@ export default defineComponent({
     };
 
     WebSocketController.handleFieldPacket = (packet: FieldPacket): void => {
-      if (!store.value.state.timer.isTicking) store.value.dispatch("timer/start");
-      store.value.commit("map/updateFieldData", packet);
+      if (!store.value.state.timer.isTicking)
+        store.value.dispatch("timer/start");
+      store.value.commit("map/revealField", packet);
     };
 
     WebSocketController.handleGameOverPacket = (
@@ -115,58 +136,39 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../shared/scss/modules/noselect';
-@use '../../../../shared/scss/variables/measurements';
-@use '../../../../shared/scss/mixins/devices';
+@use "../../../../shared/scss/modules/noselect";
+@use "../../../../shared/scss/variables/measurements";
+@use "../../../../shared/scss/mixins/devices";
 
 .wrapper-minesweeper {
   display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-
-  @include devices.desktop {
-    justify-content: center;
-    align-items: flex-start;
-    flex-direction: row;
-  }
-
+  align-items: flex-start;
   @extend %noselect;
-}
 
-.content-game {
-  display: flex;
-  flex-shrink: 0;
-
-  @include devices.phone {
-    width: 300px + measurements.$page-spacing * 2;
-    height: 300px + measurements.$page-spacing * 2;
-  }
-
-  @include devices.tablet {
-    width: 400px + measurements.$page-spacing * 2;
-    height: 400px + measurements.$page-spacing * 2;
-  }
-
-  @include devices.laptop {
-    width: 500px + measurements.$page-spacing * 2;
-    height: 500px + measurements.$page-spacing * 2;
-  }
-
-  @include devices.desktop {
-    width: 550px + measurements.$page-spacing * 2;
-    height: 550px + measurements.$page-spacing * 2;
-  }
-}
-
-.content-timer {
-  display: flex;
-  margin-bottom: measurements.$page-spacing;
-
-  @include devices.desktop {
+  > .content-block {
     margin-left: measurements.$page-spacing;
-    margin-bottom: 0;
+
+    &:first-child {
+      margin-left: 0;
+    }
   }
 
-  font-size: 3em;
+  .content-start, .content-game-modes, .content-results {
+    display: flex;
+    width: 100%;
+  }
+
+  .content-game-info, .content-timer {
+    flex: 1 1 0;
+  }
+
+  .content-game {
+    flex: 2 1 0;
+  }
+
+  .content-timer {
+    text-align: center;
+    font-size: 2rem;
+  }
 }
 </style>

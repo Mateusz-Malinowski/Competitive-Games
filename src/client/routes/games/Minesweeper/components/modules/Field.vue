@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watchEffect } from "vue";
 import { FieldState } from "../../../../../../global/games/Minesweeper/FieldState";
 import FieldPacket from "../../../../../../global/games/Minesweeper/packets/client/FieldPacket";
 import WebSocketController from "../../api/WebSocketController";
@@ -39,7 +39,7 @@ export default defineComponent({
     );
 
     const isActive = computed<boolean>(
-      () => fieldData.value.state == FieldState.None
+      () => fieldData.value.state === FieldState.None
     );
     const fieldNumber = computed<number | undefined>(
       () => fieldData.value.number
@@ -56,10 +56,13 @@ export default defineComponent({
           return `number-${fieldData.value.number as number}`;
       }
     });
-
     const hasFlag = ref<boolean>(false);
     const toggleFlag = (): void => {
       hasFlag.value = !hasFlag.value;
+      if (hasFlag.value)
+        store.commit('map/increaseFlagsCount');
+      else
+        store.commit('map/decreaseFlagsCount');
     };
     const handleContextMenu = (event: Event) => {
       event.preventDefault();
@@ -70,6 +73,13 @@ export default defineComponent({
       const fieldPacket = new FieldPacket(props.row, props.column);
       WebSocketController.sendPacket(fieldPacket);
     };
+
+    watchEffect(() => {
+      if (isActive.value === false && hasFlag.value === true) {
+        hasFlag.value = false;
+        store.commit('map/decreaseFlagsCount');
+      }
+    });
 
     return {
       isActive,

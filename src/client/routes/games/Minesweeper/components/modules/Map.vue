@@ -18,9 +18,9 @@ import { useStore } from "../../store";
 import Field from "./Field.vue";
 
 interface FieldStyle {
-  width: string;
-  height: string;
-  fontSize: string;
+  width?: string;
+  height?: string;
+  fontSize?: string;
 }
 
 export default defineComponent({
@@ -36,14 +36,18 @@ export default defineComponent({
     const fieldStyle = ref<FieldStyle>();
     const adjustFieldStyle = () => {
       const mapDiv = mapElement.value as HTMLDivElement;
-      const fieldWidth = mapDiv.clientWidth / numberOfColumns.value;
-      const fieldHeight = mapDiv.clientHeight / numberOfRows.value;
+      
+      // fieldStyle.value = {};
+      window.setTimeout(() => {
+        const fieldWidth = mapDiv.clientWidth / numberOfColumns.value;
+        const fieldHeight = fieldWidth;
 
-      fieldStyle.value = {
-        width: fieldWidth + "px",
-        height: fieldHeight + "px",
-        fontSize: fieldHeight - 6 + "px",
-      };
+        fieldStyle.value = {
+          width: fieldWidth + "px",
+          height: fieldHeight + "px",
+          fontSize: fieldHeight - 6 + "px",
+        };
+      }, 0);
     };
 
     return { numberOfRows, numberOfColumns, mapElement, fieldStyle, adjustFieldStyle };

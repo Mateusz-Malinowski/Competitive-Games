@@ -44,7 +44,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../../../shared/scss/variables/measurements';
+@use "../../../../../shared/scss/variables/measurements";
 
 .game-modes {
   display: flex;
@@ -52,23 +52,23 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   align-items: center;
-}
 
-h2 {
-  font-size: 3em;
-  margin-bottom: measurements.$page-spacing;
-}
+  h2 {
+    font-size: 3em;
+    margin-bottom: measurements.$page-spacing;
+  }
 
-.game-mode-buttons {
-  display: flex;
-}
+  .game-mode-buttons {
+    display: flex;
 
-.game-mode-button {
-  font-size: 1.25em;
-  margin-left: measurements.$page-spacing;
+    .game-mode-button {
+      font-size: 1.25em;
+      margin-left: measurements.$page-spacing;
 
-  &:first-child {
-    margin-left: 0;
+      &:first-child {
+        margin-left: 0;
+      }
+    }
   }
 }
 </style>
