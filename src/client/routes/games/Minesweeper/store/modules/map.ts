@@ -38,16 +38,21 @@ const mutations: MutationTree<MapState> = {
     state.numberOfRows = numberOfRows;
     state.numberOfColumns = numberOfColumns;
     state.numberOfMines = numberOfMines;
-    state.fieldData = initialize2dArray<FieldData>({ state: FieldState.None }, numberOfRows, numberOfColumns);
+    for (let i = 0; i < state.numberOfRows; i++) {
+      state.fieldData.push([]);
+      for (let j = 0; j < state.numberOfColumns; j++)
+        state.fieldData[i][j] = { state: FieldState.None };
+    }
     state.flagsCount = 0;
     state.revealedFieldsCount = 0;
   },
   revealField(state: MapState, fieldPacket: FieldPacket): void {
-    state.fieldData[fieldPacket.row][fieldPacket.column] = {
-      state: fieldPacket.state,
-      number: fieldPacket.number,
-      clicked: fieldPacket.clicked
-    }
+    let field = state.fieldData[fieldPacket.row][fieldPacket.column];
+
+    field.state = fieldPacket.state;
+    field.number = fieldPacket.number;
+    field.clicked = fieldPacket.clicked;
+
     state.revealedFieldsCount++;
   },
   increaseFlagsCount(state: MapState): void {

@@ -2,7 +2,7 @@
   <div class="map-info">
     <h2>{{ numberOfColumns }}x{{ numberOfRows }} {{ numberOfMines }} mines</h2>
     <div class="fields-count">
-      <span :class="{ bad: mineIsRevealed }">{{ revealedFieldsCount }}/{{ numberOfFieldsToReveal }}</span>
+      <span :class="{ bad: gameIsLost, good: gameIsWon }">{{ revealedFieldsCount }}/{{ numberOfFieldsToReveal }}</span>
       <div class="field"></div>
     </div>
     <div class="flags-count">
@@ -14,6 +14,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
+import { GameResult } from "../../../../../shared/store/modules/game";
 import { useStore } from "../../store";
 
 export default defineComponent({
@@ -30,10 +31,13 @@ export default defineComponent({
       () => store.state.map.revealedFieldsCount
     );
     const numberOfFieldsToReveal = computed<number>(
-      () => numberOfRows.value * numberOfColumns.value - numberOfMines.value
+      () => numberOfRows.value * numberOfColumns.value
     );
-    const mineIsRevealed = computed<boolean>(
-      () => revealedFieldsCount.value > numberOfFieldsToReveal.value
+    const gameIsLost = computed<boolean>(
+      () => store.state.game.gameResult === GameResult.Defeat
+    );
+    const gameIsWon = computed<boolean>(
+      () => store.state.game.gameResult === GameResult.Win
     );
 
     return {
@@ -43,7 +47,8 @@ export default defineComponent({
       flagsCount,
       revealedFieldsCount,
       numberOfFieldsToReveal,
-      mineIsRevealed,
+      gameIsLost,
+      gameIsWon
     };
   },
 });
@@ -89,6 +94,10 @@ $border-color: rgb(180, 180, 180);
 
       &.bad {
         color: colors.$bad;
+      }
+
+      &.good {
+        color: colors.$good;
       }
     }
   }

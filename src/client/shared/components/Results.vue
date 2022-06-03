@@ -39,6 +39,7 @@ export default defineComponent({
 
     const tryAgain = (): void => {
       props.store.commit('game/setGameStatus', GameStatus.Start);
+      props.store.commit('game/setGameResult', GameResult.None);
       props.store.dispatch('timer/reset');
     }
 
@@ -64,7 +65,7 @@ export default defineComponent({
   font-size: 3em;
   
   &.win {
-    color: colors.$tertiary;
+    color: colors.$good;
   }
 
   &.defeat {
