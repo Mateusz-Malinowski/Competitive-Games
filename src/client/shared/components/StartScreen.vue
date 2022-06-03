@@ -46,7 +46,14 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+
+  > * {
+    margin-top: measurements.$page-spacing;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 
   .content-text {
     .name-game {
@@ -57,7 +64,7 @@ export default defineComponent({
 
     .description-game {
       margin: 0;
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       text-align: justify;
     }
   }

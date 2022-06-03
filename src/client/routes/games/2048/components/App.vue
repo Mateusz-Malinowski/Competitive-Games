@@ -23,7 +23,7 @@
       </div>
       <template v-if="gameStatus === GameStatus.Playing">
         <div class="content-block content-game-info">
-          
+          <BoardInfo />
         </div>
         <div class="content-block content-game">
           <Board />
@@ -55,9 +55,10 @@ import StartGamePacket from "../../../../../global/games/2048/packets/client/Sta
 import Results from "../../../../shared/components/Results.vue";
 import GameOverPacket from "../../../../../global/games/2048/packets/server/GameOverPacket";
 import arrowsPath from "url:../../../../shared/assets/controls/arrows.svg";
+import BoardInfo from "./modules/BoardInfo.vue";
 
 export default defineComponent({
-  components: { Navbar, Board, StartScreen, Timer, Results, Control },
+  components: { Navbar, Board, StartScreen, Timer, Results, Control, BoardInfo },
   setup() {
     const store = computed(() => useStore());
 

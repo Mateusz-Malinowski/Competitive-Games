@@ -9,6 +9,7 @@ export interface BoardState {
   fields: Field[][];
   movementEnabled: boolean;
   animationSpeed: number;
+  movesCount: number;
 }
 
 export interface Field {
@@ -28,7 +29,8 @@ const state = (): BoardState => ({
   numberOfColumns: 0,
   fields: [],
   movementEnabled: false,
-  animationSpeed: 0
+  animationSpeed: 0,
+  movesCount: 0
 });
 
 const mutations: MutationTree<BoardState> = {
@@ -36,6 +38,8 @@ const mutations: MutationTree<BoardState> = {
     state.numberOfRows = numberOfRows;
     state.numberOfColumns = numberOfColumns;
     state.animationSpeed = animationSpeed;
+    state.movementEnabled = false;
+    state.movesCount = 0;
     for (let i = 0; i < state.numberOfRows; i++) {
       state.fields.push([]);
       for (let j = 0; j < state.numberOfColumns; j++)
@@ -135,6 +139,7 @@ const mutations: MutationTree<BoardState> = {
     }
 
     state.fields = fieldsCopy;
+    state.movesCount++;
 
     return;
 

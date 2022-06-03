@@ -26,7 +26,7 @@ export default defineComponent({
   align-items: center;
 
   .description {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
     font-family: monospace;
     margin-bottom: math.div(measurements.$page-spacing, 2);
