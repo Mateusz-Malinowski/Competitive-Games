@@ -1,10 +1,12 @@
 <template>
-  <div class="content-404">
+<div class="limiter">
+  <div class="content">
     <img :src="imgSrc404" alt="404" class="img-404" />
-    <h2>The game you're looking for doesn't exists...</h2>
-    <h3>Go back to playing Competitive Games!</h3>
+    <h2>Hey! No competition here!</h2>
+    <h3>Go back home and play Competitve Games!</h3>
     <AnimatedButton class="button-home" href="/">Go back home</AnimatedButton>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -27,25 +29,25 @@ export default defineComponent({
 @use '../../../shared/scss/variables/measurements';
 @use '../../../shared/scss/variables/shadows';
 
-.content-404 {
-  padding: measurements.$page-spacing;
+.content {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  padding: measurements.$page-spacing;
 }
 
 .img-404 {
   width: 100%;
-  max-width: 800px;
+  max-height: 50vh;
   filter: drop-shadow(shadows.$icon);
 }
 
 h2,
 h3,
 .button-home {
-  margin-top: 40px;
+  margin-top: measurements.$page-spacing;
 }
 
 h2,
@@ -54,14 +56,14 @@ h3 {
 }
 
 h2 {
-  font-size: 2.5em;
+  font-size: 2.5rem;
 }
 
 h3 {
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 
 .button-home {
-  font-size: 1.5em;
+  font-size: 1.5rem;
 }
 </style>

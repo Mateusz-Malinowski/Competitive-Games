@@ -2,11 +2,12 @@
   <nav>
     <div class="navbar">
       <a href="/" class="logo">
-        <img :src="logoPath" alt="full-logo" />
+        <img :src="logoPathFull" alt="full-logo" class="logo-full" />
+        <img :src="logoPathSmall" alt="small-logo" class="logo-small" />
       </a>
       <div class="links" :class="{ dropped: isDropped }">
         <a
-          v-for="link in navbarLinks"
+          v-for="link in contentLinks"
           :key="link.name"
           :href="link.href"
           class="link"
@@ -25,17 +26,17 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import logoPath from "url:../assets/logos/full-logo.svg";
-
+import logoPathFull from "url:../assets/logos/full-logo.svg";
+import logoPathSmall from "url:../assets/logos/logo.svg";
 import DropdownButton from "./DropdownButton.vue";
 
 export default defineComponent({
   components: { DropdownButton },
   setup() {
-    const navbarLinks = ref([
+    const contentLinks = ref([
       { name: "Home", href: "/" },
       { name: "Games", href: "/games" },
-      { name: "Profile", href: "/profile" },
+      { name: "Trophies", href: "/trophies" },
     ]);
 
     const isDropped = ref<Boolean>(false);
@@ -44,7 +45,7 @@ export default defineComponent({
       isDropped.value = !isDropped.value;
     };
 
-    return { logoPath, navbarLinks, isDropped, dropMenu };
+    return { logoPathFull, logoPathSmall, contentLinks, isDropped, dropMenu };
   },
 });
 </script>
@@ -62,7 +63,6 @@ nav {
   display: flex;
   position: sticky;
   top: 0;
-  margin: 0 measurements.$page-spacing;
   @extend %noselect;
 
   .navbar {
@@ -75,12 +75,6 @@ nav {
     background-color: colors.$navbar;
     padding: 0 #{math.div(measurements.$page-spacing, 2)};
     box-shadow: shadows.$navbar;
-    border-bottom-left-radius: measurements.$border-radius;
-    border-bottom-right-radius: measurements.$border-radius;
-
-    @include devices.laptop {
-      justify-content: unset;
-    }
 
     .logo {
       margin-right: #{math.div(measurements.$page-spacing, 2)};
@@ -88,6 +82,10 @@ nav {
       img {
         height: 35px;
         filter: drop-shadow(shadows.$icon);
+
+        &.logo-full {
+          display: none;
+        }
       }
     }
 
@@ -109,7 +107,32 @@ nav {
         overflow: hidden;
       }
 
-      @include devices.laptop {
+      .link {
+        @extend %button;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease;
+        padding: 10px 0;
+
+        &:hover {
+          background-color: darken(colors.$navbar, 10%);
+        }
+      }
+    }
+  }
+}
+
+@include devices.laptop {
+  nav {
+    .navbar {
+      justify-content: unset;
+
+      .dropdown-button {
+        display: none;
+      }
+
+      .links {
         display: flex;
         height: 100%;
         position: unset;
@@ -122,30 +145,27 @@ nav {
         border-bottom-left-radius: unset;
         border-bottom-right-radius: unset;
         z-index: unset;
-      }
 
-      .link {
-        @extend %button;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background-color 0.3s ease;
-        padding: 10px 0;
-
-        &:hover {
-          background-color: darken(colors.$navbar, 10%);
-        }
-
-        @include devices.laptop {
+        .link {
           height: 100%;
           padding: 0 #{math.div(measurements.$page-spacing, 2)};
         }
       }
     }
+  }
+}
 
-    .dropdown-button {
-      @include devices.laptop {
-        display: none;
+@include devices.tablet {
+  nav {
+    .navbar {
+      .logo {
+        img.logo-small {
+          display: none;
+        }
+
+        img.logo-full {
+          display: unset;
+        }
       }
     }
   }

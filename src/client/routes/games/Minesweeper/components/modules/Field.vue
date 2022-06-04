@@ -1,7 +1,11 @@
 <template>
   <div
     class="field"
-    :class="[{ active: isActive }, { flag: hasFlag && !contentClass }, contentClass]"
+    :class="[
+      { active: isActive },
+      { flag: hasFlag && !contentClass },
+      contentClass,
+    ]"
     v-on="{
       click: isActive ? handleClick : null,
       contextmenu: isActive ? handleContextMenu : null,
@@ -59,10 +63,8 @@ export default defineComponent({
     const hasFlag = ref<boolean>(false);
     const toggleFlag = (): void => {
       hasFlag.value = !hasFlag.value;
-      if (hasFlag.value)
-        store.commit('map/increaseFlagsCount');
-      else
-        store.commit('map/decreaseFlagsCount');
+      if (hasFlag.value) store.commit("map/increaseFlagsCount");
+      else store.commit("map/decreaseFlagsCount");
     };
     const handleContextMenu = (event: Event) => {
       event.preventDefault();
@@ -77,7 +79,7 @@ export default defineComponent({
     watchEffect(() => {
       if (isActive.value === false && hasFlag.value === true) {
         hasFlag.value = false;
-        store.commit('map/decreaseFlagsCount');
+        store.commit("map/decreaseFlagsCount");
       }
     });
 
@@ -101,22 +103,6 @@ $number-colors: rgb(230, 230, 230), rgb(255, 120, 0), rgb(0, 255, 255),
   rgb(255, 0, 255), rgb(255, 255, 0), rgb(0, 0, 255), rgb(0, 255, 0),
   rgb(255, 0, 0);
 
-.field {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: $background-color-unrevealed;
-}
-
-.active {
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    background-color: darken($background-color-unrevealed, 10);
-  }
-}
-
 %revealed {
   background-color: $background-color-revealed;
 }
@@ -126,29 +112,44 @@ $number-colors: rgb(230, 230, 230), rgb(255, 120, 0), rgb(0, 255, 255),
   background-repeat: no-repeat;
 }
 
-.empty {
-  @extend %revealed;
-}
+.field {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $background-color-unrevealed;
+  transition: background-color 0.3s ease;
 
-.mine {
-  @extend %revealed;
-  @extend %with-image;
-  background-image: url(../../assets/mine.png);
+  &.active {
+    cursor: pointer;
 
-  &.clicked {
-    background-color: $clicked-mine-color;
+    &:hover {
+      background-color: darken($background-color-unrevealed, 10);
+    }
   }
-}
-
-@for $i from 1 through 8 {
-  .number-#{$i} {
+  &.empty {
     @extend %revealed;
-    color: nth($number-colors, $i);
   }
-}
 
-.flag {
-  @extend %with-image;
-  background-image: url(../../assets/flag.png);
+  &.mine {
+    @extend %revealed;
+    @extend %with-image;
+    background-image: url(../../assets/mine.png);
+
+    &.clicked {
+      background-color: $clicked-mine-color;
+    }
+  }
+
+  @for $i from 1 through 8 {
+    &.number-#{$i} {
+      @extend %revealed;
+      color: nth($number-colors, $i);
+    }
+  }
+
+  &.flag {
+    @extend %with-image;
+    background-image: url(../../assets/flag.png);
+  }
 }
 </style>

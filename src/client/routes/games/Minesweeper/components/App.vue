@@ -1,6 +1,6 @@
 <template>
+  <Navbar />
   <div class="limiter">
-    <Navbar />
     <div class="wrapper wrapper-minesweeper">
       <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
         <StartScreen :handlePlay="startGame">

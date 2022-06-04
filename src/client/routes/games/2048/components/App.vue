@@ -1,6 +1,6 @@
 <template>
+  <Navbar />
   <div class="limiter">
-    <Navbar />
     <div class="wrapper wrapper-2048">
       <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
         <StartScreen :handlePlay="startGame">
@@ -10,8 +10,8 @@
             You move all tiles in one direction at once. Tiles with the same number 
             are merged together to form a new tile with doubled number. Two tiles appear 
             initially on the board. After every move, one tile appears in an empty space. 
-            If there's no empty spaces after a move, you lose! Just getting to 2048 is hard, 
-            but remember: The clock is ticking and the leaderboard does not forgive mistakes!
+            If there's no empty spaces after a move, you lose! Just getting to 2048 can be 
+            a challenge. The clock is ticking!
           </template>
           <template #controls>
             <Control>
