@@ -1,13 +1,38 @@
 @use "../variables/colors";
 @use "../variables/shadows";
 
+html {
+    scrollbar-width: thin;
+    scrollbar-color: colors.$scrollbar-thumb colors.$scrollbar-track;
+
+    &::-webkit-scrollbar {
+        width: 0.5vw;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: colors.$scrollbar-thumb;
+
+        &:hover {
+            background-color: lighten(colors.$scrollbar-thumb, 5%);
+        }
+
+        &:active {
+            background-color: lighten(colors.$scrollbar-thumb, 15%);
+        }
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: colors.$scrollbar-track;
+    }
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     color: colors.$text;
     background-color: colors.$background;
     text-shadow: shadows.$text;
     margin: 0;
-
+    
     * {
         box-sizing: border-box;
     }

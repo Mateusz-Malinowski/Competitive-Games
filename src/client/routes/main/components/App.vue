@@ -2,7 +2,7 @@
   <Navbar />
   <Slider class="slider" />
   <div class="limiter">
-    <div class="wrapper wrapper-info-tiles">
+    <div class="wrapper">
       <InfoTiles />
     </div>
   </div>
@@ -24,6 +24,8 @@ export default defineComponent({
 @use "../../../shared/scss/variables/measurements";
 
 .slider {
+  width: 100%;
   height: calc(100vh - #{measurements.$navbar-height});
+  max-height: 150vw;
 }
 </style>

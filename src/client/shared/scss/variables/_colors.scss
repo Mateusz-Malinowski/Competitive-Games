@@ -13,3 +13,6 @@ $text-dark: rgb(10, 10, 10);
 
 $text: $text-light;
 $button: $secondary;
+
+$scrollbar-track: darken($primary, 5%);
+$scrollbar-thumb: lighten($primary, 5%);

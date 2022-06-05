@@ -62,6 +62,7 @@ export default defineComponent({
 nav {
   display: flex;
   position: sticky;
+  z-index: 1000;
   top: 0;
   @extend %noselect;
 
@@ -90,7 +91,8 @@ nav {
     }
 
     .links {
-      display: none;
+      display: flex;
+      opacity: 0%;
       position: absolute;
       width: calc(100% - #{measurements.$border-radius * 2});
       flex-direction: column;
@@ -101,10 +103,15 @@ nav {
       border-bottom-left-radius: measurements.$border-radius;
       border-bottom-right-radius: measurements.$border-radius;
       z-index: -1;
+      transition-property: opacity, transform;
+      transition-duration: 0.3s;
+      transition-timing-function: ease;
+      transform: translateY(-200px);
 
       &.dropped {
-        display: flex;
+        opacity: 100%;
         overflow: hidden;
+        transform: translateY(0);
       }
 
       .link {
@@ -133,8 +140,8 @@ nav {
       }
 
       .links {
-        display: flex;
         height: 100%;
+        opacity: 100%;
         position: unset;
         width: unset;
         flex-direction: unset;
@@ -145,6 +152,7 @@ nav {
         border-bottom-left-radius: unset;
         border-bottom-right-radius: unset;
         z-index: unset;
+        transform: translateY(0);
 
         .link {
           height: 100%;
