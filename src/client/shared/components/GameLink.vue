@@ -1,5 +1,5 @@
 <template>
-  <a class="game-link" :href="/games/ + name" @mouseover="playVideo" @mouseout="resetVideo">
+  <a ref="gameLink" class="game-link" :href="/games/ + name" @mouseover="playVideo" @mouseout="resetVideo">
     <div class="video-wrapper">
       <video muted loop ref="video" :class="{ gray: isVideoGray }">
         <source :src="videoPath" type="video/mp4" />
@@ -26,6 +26,7 @@ export default defineComponent({
     },
   },
   setup() {
+    const gameLink = ref<HTMLAnchorElement>();
     const video = ref<HTMLMediaElement>();
     const isVideoGray = ref<boolean>(true);
 
@@ -42,8 +43,20 @@ export default defineComponent({
       videoMedia.currentTime = 0;
     }
 
-    return { video, isVideoGray, playVideo, resetVideo };
+    const adjustSize = (): void => {
+      const gameLinkElement = gameLink.value as HTMLAnchorElement;
+      gameLinkElement.style.height = gameLinkElement.clientWidth + "px";
+    }
+
+    return { video, isVideoGray, playVideo, resetVideo, gameLink, adjustSize };
   },
+  mounted() {
+    this.adjustSize();
+    window.addEventListener('resize', this.adjustSize);
+  },
+  unmounted() {
+    window.removeEventListener('resize', this.adjustSize);
+  }
 });
 </script>
 
@@ -80,6 +93,9 @@ export default defineComponent({
   }
 
   .overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100%;
     z-index: 1;
@@ -89,7 +105,7 @@ export default defineComponent({
 
     span {
       font-weight: bold;
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
   }
 
