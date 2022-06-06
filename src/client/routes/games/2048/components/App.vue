@@ -37,12 +37,14 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import NewTilePacket from "../../../../../global/games/2048/packets/server/NewTilePacket";
 import Navbar from "../../../../shared/components/Navbar.vue";
+import Footer from "../../../../shared/components/Footer.vue";
 import WebSocketController from "../api/WebSocketController";
 import { useStore } from "../store";
 import { GameResult, GameStatus } from "../../../../shared/store/modules/game";
@@ -58,7 +60,7 @@ import arrowsPath from "url:../../../../shared/assets/controls/arrows.svg";
 import BoardInfo from "./modules/BoardInfo.vue";
 
 export default defineComponent({
-  components: { Navbar, Board, StartScreen, Timer, Results, Control, BoardInfo },
+  components: { Navbar, Footer, Board, StartScreen, Timer, Results, Control, BoardInfo },
   setup() {
     const store = computed(() => useStore());
 

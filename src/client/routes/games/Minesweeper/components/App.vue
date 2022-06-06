@@ -46,11 +46,13 @@
       </div>
     </div>
   </div>
+  <Footer />
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import Navbar from "../../../../shared/components/Navbar.vue";
+import Footer from "../../../../shared/components/Footer.vue";
 import GameModes from "./modules/GameModes.vue";
 import Map from "./modules/Map.vue";
 import Results from "../../../../shared/components/Results.vue";
@@ -71,6 +73,7 @@ import MapInfo from "./modules/MapInfo.vue";
 export default defineComponent({
   components: {
     Navbar,
+    Footer,
     Map,
     GameModes,
     Timer,

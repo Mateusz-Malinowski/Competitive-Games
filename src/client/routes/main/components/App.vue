@@ -6,16 +6,18 @@
       <InfoTiles />
     </div>
   </div>
+  <Footer />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import Navbar from "../../../shared/components/Navbar.vue";
+import Footer from "../../../shared/components/Footer.vue";
 import Slider from "./modules/Slider.vue";
 import InfoTiles from "./modules/InfoTiles.vue";
 
 export default defineComponent({
-  components: { Navbar, InfoTiles, Slider },
+  components: { Navbar, InfoTiles, Slider, Footer },
   setup() {},
 });
 </script>
