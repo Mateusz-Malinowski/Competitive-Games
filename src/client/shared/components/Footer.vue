@@ -1,10 +1,7 @@
 <template>
   <footer>
     <address>
-      Made by
-      <a href="mailto:mateusz.malinowski.343@gmail.com" class="link-author"
-        >Malina</a
-      >
+      Made by <span class="author">Malina</span>
     </address>
     <div class="copyright">
       &copy; Mateusz Malinowski 2022. All rights reserved.
@@ -38,12 +35,9 @@ footer {
   box-shadow: shadows.$footer;
   margin-top: auto;
 
-  .link-author {
-    font-weight: bold;
-    transition: text-shadow 0.3s ease;
-
-    &:hover {
-      text-shadow: 0 0 2px colors.$text-light;
+  address {
+    .author {
+      font-weight: bold;
     }
   }
 

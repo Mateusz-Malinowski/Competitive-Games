@@ -69,7 +69,7 @@ export default defineComponent({
         imgPath: sliderLogoMiddle,
         imgPathLargeLaptop: sliderLogoLeft,
         contentSide: ContentSide.Left,
-        link: "/games",
+        link: "/game-list",
       },
       {
         title: "2048",

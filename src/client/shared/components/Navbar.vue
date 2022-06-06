@@ -35,7 +35,7 @@ export default defineComponent({
   setup() {
     const contentLinks = ref([
       { name: "Home", href: "/" },
-      { name: "Games", href: "/games" },
+      { name: "Games", href: "/game-list" },
       { name: "Trophies", href: "/trophies" },
     ]);
 

@@ -11,12 +11,11 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import Navbar from "../../../shared/components/Navbar.vue";
 import AnimatedButton from "../../../shared/components/AnimatedButton.vue";
 import imgPath404 from "url:../assets/404.svg";
 
 export default defineComponent({
-  components: { Navbar, AnimatedButton },
+  components: { AnimatedButton },
   setup() {
     const imgSrc404 = ref(imgPath404);
 
