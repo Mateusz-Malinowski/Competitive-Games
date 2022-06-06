@@ -4,6 +4,7 @@
   <div class="limiter">
     <div class="wrapper">
       <InfoTiles />
+      <GameLinks />
     </div>
   </div>
   <Footer />
@@ -13,11 +14,12 @@
 import { defineComponent } from "vue";
 import Navbar from "../../../shared/components/Navbar.vue";
 import Footer from "../../../shared/components/Footer.vue";
+import GameLinks from "../../../shared/components/GameLinks.vue";
 import Slider from "./modules/Slider.vue";
 import InfoTiles from "./modules/InfoTiles.vue";
 
 export default defineComponent({
-  components: { Navbar, InfoTiles, Slider, Footer },
+  components: { Navbar, InfoTiles, Slider, Footer, GameLinks },
   setup() {},
 });
 </script>
@@ -29,5 +31,10 @@ export default defineComponent({
   width: 100%;
   height: calc(100vh - #{measurements.$navbar-height});
   max-height: 150vw;
+}
+
+.wrapper {
+  display: grid;
+  gap: measurements.$page-spacing;
 }
 </style>

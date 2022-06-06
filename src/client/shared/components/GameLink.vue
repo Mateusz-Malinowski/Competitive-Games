@@ -1,27 +1,49 @@
 <template>
-  <a ref="gameLink" class="game-link" :href="/games/ + name" @mouseover="playVideo" @mouseout="resetVideo">
-    <div class="video-wrapper">
-      <video muted loop ref="video" :class="{ gray: isVideoGray }">
-        <source :src="videoPath" type="video/mp4" />
-      </video>
-    </div>
-    <div class="overlay">
-      <span>{{ name }}</span>
-    </div>
-  </a>
+  <template v-if="name !== undefined">
+    <a ref="gameLink" class="game-link" :href="/games/ + name" @mouseover="playVideo" @mouseout="resetVideo">
+      <div class="video-wrapper">
+        <video muted loop ref="video" :class="{ gray: isVideoGray }">
+          <source :src="videoPath" type="video/mp4" />
+        </video>
+      </div>
+      <div class="overlay">
+        <span>{{ name }}</span>
+      </div>
+    </a>
+  </template>
+  <template v-else>
+    <a ref="gameLink" class="game-link" @mouseover="playVideo" @mouseout="resetVideo">
+      <div class="video-wrapper">
+        <template v-if="videoPath !== undefined">
+          <video muted loop ref="video" :class="{ gray: isVideoGray }">
+            <source :src="videoPath" type="video/mp4" />
+          </video>
+        </template>
+        <template v-else>
+          <video muted loop ref="video" :class="{ gray: isVideoGray }">
+            <source :src="videoFallbackPath" type="video/mp4" />
+          </video>
+        </template>
+      </div>
+      <div class="overlay">
+        <span>Coming soon...</span>
+      </div>
+    </a>
+  </template>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import videoFallbackPath from "url:../assets/videos/default.mp4";
 
 export default defineComponent({
   props: {
     name: {
-      required: true,
+      required: false,
       type: String,
     },
     videoPath: {
-      required: true,
+      required: false,
       type: String,
     },
   },
@@ -48,7 +70,7 @@ export default defineComponent({
       gameLinkElement.style.height = gameLinkElement.clientWidth + "px";
     }
 
-    return { video, isVideoGray, playVideo, resetVideo, gameLink, adjustSize };
+    return { video, isVideoGray, playVideo, resetVideo, gameLink, adjustSize, videoFallbackPath };
   },
   mounted() {
     this.adjustSize();
@@ -63,13 +85,20 @@ export default defineComponent({
 <style lang="scss" scoped>
 @use "../scss/variables/measurements";
 @use "../scss/variables/shadows";
+@use "../scss/variables/colors";
+@use "../scss/modules/noselect";
 
 .game-link {
   display: inline-flex;
   position: relative;
-  box-shadow: shadows.$main;
+  box-shadow: shadows.$game-link-base;
   border-radius: measurements.$border-radius;
   overflow: hidden;
+  outline: 1px solid black;
+  transition-property: box-shadow, transform;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+  @extend %noselect;
 
   .video-wrapper {
     display: flex;
@@ -104,12 +133,16 @@ export default defineComponent({
     transition: background-color 0.3s ease;
 
     span {
+      text-align: center;
       font-weight: bold;
       font-size: 2rem;
     }
   }
 
   &:hover {
+    box-shadow: shadows.$game-link-hover;
+    transform: scale(1.05);
+
     .overlay {
       background-color: rgba(0, 0, 0, 0.25);
     }

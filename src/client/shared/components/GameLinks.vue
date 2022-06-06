@@ -1,13 +1,11 @@
 <template>
   <div class="game-links">
     <h2 class="header">Time attack</h2>
-    <GameLink class="game-link" name="2048" :videoPath="video2048Path" />
-    <GameLink
-      class="game-link"
-      name="Minesweeper"
-      :videoPath="videoMinesweeperPath"
-    />
+    <GameLink name="2048" :videoPath="video2048Path" />
+    <GameLink name="Minesweeper" :videoPath="videoMinesweeperPath" />
+    <GameLink />
     <h2 class="header">Score madness</h2>
+    <GameLink />
   </div>
 </template>
 
