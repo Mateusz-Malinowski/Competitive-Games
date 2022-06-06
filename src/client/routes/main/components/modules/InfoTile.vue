@@ -34,6 +34,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 @use "../../../../shared/scss/variables/measurements";
 @use "../../../../shared/scss/variables/colors";
+@use "../../../../shared/scss/mixins/devices";
 @use "sass:math";
 
 .info-tile {
@@ -58,7 +59,19 @@ export default defineComponent({
     .content {
       margin: 0;
       margin-top: math.div(measurements.$page-spacing, 2);
-      text-align: justify;
+      font-size: 1.2rem;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+  }
+}
+
+@include devices.laptop {
+  .info-tile {
+    .content-text {
+      .content {
+        text-align: justify;
+      }
     }
   }
 }

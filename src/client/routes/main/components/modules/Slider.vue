@@ -44,6 +44,8 @@ import sliderLogoLeft from "url:../../assets/slider-logo-left.png";
 import sliderLogoMiddle from "url:../../assets/slider-logo-middle.png";
 import slider2048Right from "url:../../assets/slider-2048-right.png";
 import slider2048Middle from "url:../../assets/slider-2048-middle.png";
+import sliderMinesweeperLeft from "url:../../assets/slider-minesweeper-left.png";
+import sliderMinesweeperMiddle from "url:../../assets/slider-minesweeper-middle.png";
 
 enum ContentSide {
   Left,
@@ -76,6 +78,13 @@ export default defineComponent({
         contentSide: ContentSide.Right,
         link: "/games/2048",
       },
+      {
+        title: "Minesweeper",
+        imgPath: sliderMinesweeperMiddle,
+        imgPathLargeLaptop: sliderMinesweeperLeft,
+        contentSide: ContentSide.Left,
+        link: "/games/Minesweeper",
+      },
     ];
     let index = 0;
 
@@ -85,7 +94,7 @@ export default defineComponent({
       if (index === 0) {
         const newIndex = elements.length - 1;
         index = newIndex;
-        elements[index].scrollIntoView({ block: "nearest" });
+        scrollInstant();
       }
       
       index--;
@@ -98,16 +107,21 @@ export default defineComponent({
       if (index === elements.length - 1) {
         const newIndex = 0;
         index = newIndex;
-        elements[index].scrollIntoView({ block: "nearest" });
+        scrollInstant();
       }
 
       index++;
       scrollSmoothly();
     };
 
+    const scrollInstant = (): void => {
+      const elements = slideElements.value as NodeListOf<HTMLDivElement>;
+      elements[index].scrollIntoView({ block: "end", inline: "start" });
+    }
+
     const scrollSmoothly = (): void => {
       const elements = slideElements.value as NodeListOf<HTMLDivElement>;
-      elements[index].scrollIntoView({ behavior: "smooth", block: "nearest" });
+      elements[index].scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
     };
 
     return {
@@ -120,7 +134,7 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.slideElements = document.querySelectorAll(".slider .slide");
+    this.slideElements = document.querySelectorAll(".slider .slide") as NodeListOf<HTMLDivElement>;
     window.addEventListener("resize", this.scrollSmoothly);
   },
   unmounted() {
@@ -133,6 +147,7 @@ export default defineComponent({
 @use "../../../../shared/scss/variables/shadows";
 @use "../../../../shared/scss/variables/measurements";
 @use "../../../../shared/scss/mixins/devices";
+@use "../../../../shared/scss/modules/noselect";
 @use "sass:math";
 
 .slider {
@@ -180,7 +195,7 @@ export default defineComponent({
         background-color: rgba(0, 0, 0, 0.5);
 
         .header {
-          font-size: 3.4rem;
+          font-size: 2.5rem;
           text-align: center;
           text-shadow: shadows.$main;
         }
@@ -193,6 +208,7 @@ export default defineComponent({
     position: absolute;
     opacity: 30%;
     transition: opacity 0.3s ease;
+    @extend %noselect;
 
     &.navigation-before {
       left: 0;
@@ -214,6 +230,20 @@ export default defineComponent({
 }
 
 @include devices.tablet {
+  .slider {
+    .slides {
+      .slide {
+        .overlay {
+          .header {
+            font-size: 3.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include devices.laptop {
   .slider {
     .slides {
       .slide {
