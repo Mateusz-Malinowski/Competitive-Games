@@ -21,7 +21,7 @@ export default defineComponent({
 .animated-button {
   @extend %button;
   display: inline-flex;
-  background-color: colors.$button;
+  background-color: colors.$animated-button;
   box-shadow: shadows.$button-base;
   padding: 10px 20px;
   border-radius: 10px;
@@ -30,7 +30,7 @@ export default defineComponent({
   transition-timing-function: ease;
   
   &:hover {
-    background-color: darken(colors.$button, 10%);
+    background-color: darken(colors.$animated-button, 10%);
     transform: scale(1.05);
     box-shadow: shadows.$button-hover;
   }

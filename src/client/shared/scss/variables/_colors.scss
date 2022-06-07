@@ -13,7 +13,9 @@ $text-light: rgb(220, 220, 220);
 $text-dark: rgb(10, 10, 10);
 
 $text: $text-light;
-$button: $secondary;
+$animated-button: $secondary;
+$state-button: rgb(40, 40, 40);
+$state-button-active: $secondary;
 
 $scrollbar-track: darken($primary, 5%);
 $scrollbar-thumb: lighten($primary, 5%);

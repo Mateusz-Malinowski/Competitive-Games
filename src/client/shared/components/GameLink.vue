@@ -149,7 +149,6 @@ export default defineComponent({
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: filter 0.3s ease;
 
       &.gray {
         filter: grayscale(1);

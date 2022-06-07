@@ -1,15 +1,18 @@
 [
     {
+        "name": "small",
         "numberOfRows": 10,
         "numberOfColumns": 10,
         "numberOfMines": 8
     },
     {
+        "name": "medium",
         "numberOfRows": 15,
         "numberOfColumns": 15,
         "numberOfMines": 25
     },
     {
+        "name": "large",
         "numberOfRows": 20,
         "numberOfColumns": 20,
         "numberOfMines": 35
