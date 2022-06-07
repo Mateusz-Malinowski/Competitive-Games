@@ -8,8 +8,8 @@
       <template #content>
         No place for cheaters here in Competitive Games - game server creates a data 
         representation of the game you are playing and handles the input that the 
-        player provides. Everything related to game logic is stored on the server and 
-        user doesn't have access to this data, what makes cheating impossible.
+        player provides. Everything related to game logic is stored on the server, so that the  
+        user can't have access to it.
       </template>
     </InfoTile>
     <InfoTile>

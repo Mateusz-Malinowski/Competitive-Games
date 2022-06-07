@@ -1,6 +1,12 @@
 <template>
   <template v-if="name !== undefined">
-    <a ref="gameLink" class="game-link" :href="/games/ + name" @mouseover="playVideo" @mouseout="resetVideo">
+    <a
+      ref="gameLink"
+      class="game-link"
+      :href="/games/ + name"
+      @mouseover="playVideo"
+      @mouseout="resetVideo"
+    >
       <div class="video-wrapper">
         <video muted loop ref="video" :class="{ gray: isVideoGray }">
           <source :src="videoPath" type="video/mp4" />
@@ -12,7 +18,12 @@
     </a>
   </template>
   <template v-else>
-    <a ref="gameLink" class="game-link" @mouseover="playVideo" @mouseout="resetVideo">
+    <a
+      ref="gameLink"
+      class="game-link"
+      @mouseover="playVideo"
+      @mouseout="resetVideo"
+    >
       <div class="video-wrapper">
         <template v-if="videoPath !== undefined">
           <video muted loop ref="video" :class="{ gray: isVideoGray }">
@@ -51,34 +62,58 @@ export default defineComponent({
     const gameLink = ref<HTMLAnchorElement>();
     const video = ref<HTMLMediaElement>();
     const isVideoGray = ref<boolean>(true);
+    const isPlaying = ref<boolean>(false);
+    const resetVideoAfterPlaying = ref<boolean>(false);
 
-    const playVideo = (): void => {
+    const playVideo = async (): Promise<void> => {
       const videoMedia = video.value as HTMLMediaElement;
       isVideoGray.value = false;
-      videoMedia.play();
+      await videoMedia.play();
+      isPlaying.value = true;
+
+      // solves play() call was interrupted by pause() call issue
+      if (resetVideoAfterPlaying.value) { 
+        resetVideoAfterPlaying.value = false;
+        resetVideo();
+      }
     };
 
     const resetVideo = (): void => {
+      // solves play() call was interrupted by pause() call issue
+      if (!isPlaying.value) {
+        resetVideoAfterPlaying.value = true;
+        return;
+      }
+
       const videoMedia = video.value as HTMLMediaElement;
       isVideoGray.value = true;
       videoMedia.pause();
       videoMedia.currentTime = 0;
-    }
+      isPlaying.value = false;
+    };
 
     const adjustSize = (): void => {
       const gameLinkElement = gameLink.value as HTMLAnchorElement;
       gameLinkElement.style.height = gameLinkElement.clientWidth + "px";
-    }
+    };
 
-    return { video, isVideoGray, playVideo, resetVideo, gameLink, adjustSize, videoFallbackPath };
+    return {
+      video,
+      isVideoGray,
+      playVideo,
+      resetVideo,
+      gameLink,
+      adjustSize,
+      videoFallbackPath,
+    };
   },
   mounted() {
     this.adjustSize();
-    window.addEventListener('resize', this.adjustSize);
+    window.addEventListener("resize", this.adjustSize);
   },
   unmounted() {
-    window.removeEventListener('resize', this.adjustSize);
-  }
+    window.removeEventListener("resize", this.adjustSize);
+  },
 });
 </script>
 
@@ -114,6 +149,7 @@ export default defineComponent({
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: filter 0.3s ease;
 
       &.gray {
         filter: grayscale(1);
