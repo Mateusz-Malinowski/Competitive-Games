@@ -1,26 +1,55 @@
 <template>
   <div class="game-links">
-    <h2 class="header">Time attack</h2>
-    <GameLink name="2048" :videoPath="video2048Path" />
-    <GameLink name="Minesweeper" :videoPath="videoMinesweeperPath" />
-    <GameLink />
-    <h2 class="header">Score madness</h2>
-    <GameLink />
+    <Transition name="swipe" appear>
+      <h2 class="header">Time attack</h2>
+    </Transition>
+    <TransitionGroup name="pop" appear>
+      <GameLink
+        v-for="(game, index) in timeAttackGames"
+        :key="index"
+        :name="game.name"
+        :videoPath="game.videoPath"
+      />
+    </TransitionGroup>
+    <Transition name="swipe" appear>
+      <h2 class="header">Score madness</h2>
+    </Transition>
+    <TransitionGroup name="pop" appear>
+      <GameLink
+        v-for="(game, index) in scoreMadnessGames"
+        :key="index"
+        :name="game.name"
+        :videoPath="game.videoPath"
+      />
+    </TransitionGroup>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from "vue";
 import GameLink from "./GameLink.vue";
 import videoMinesweeperPath from "url:../assets/videos/Minesweeper.mp4";
 import video2048Path from "url:../assets/videos/2048.mp4";
 
+interface GameLink {
+  name?: string;
+  videoPath?: string;
+}
+
 export default defineComponent({
   components: { GameLink },
   setup() {
-    return { videoMinesweeperPath, video2048Path };
+    const timeAttackGames: GameLink[] = [
+      { name: "2048", videoPath: video2048Path },
+      { name: "Minesweeper", videoPath: videoMinesweeperPath },
+      {},
+    ];
+
+    const scoreMadnessGames: GameLink[] = [{}];
+
+    return { timeAttackGames, scoreMadnessGames };
   },
-})
+});
 </script>
 
 

@@ -1,12 +1,20 @@
 <template>
-<div class="limiter">
-  <div class="content">
-    <img :src="imgSrc404" alt="404" class="img-404" />
-    <h2>Hey! No competition here!</h2>
-    <h3>Go back home and play Competitve Games!</h3>
-    <AnimatedButton class="button-home" href="/">Go back home</AnimatedButton>
+  <div class="limiter">
+    <div class="content">
+      <Transition name="swipe" appear>
+        <img :src="imgSrc404" alt="404" class="img-404" />
+      </Transition>
+      <Transition name="swipe" appear>
+        <h2>Hey! No competition here!</h2>
+      </Transition>
+      <Transition name="swipe" appear>
+        <h3>Go back home and play Competitve Games!</h3>
+      </Transition>
+      <Transition name="pop" appear>
+        <AnimatedButton class="button-home" href="/">Go back home</AnimatedButton>
+      </Transition>  
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -25,8 +33,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@use '../../../shared/scss/variables/measurements';
-@use '../../../shared/scss/variables/shadows';
+@use "../../../shared/scss/variables/measurements";
+@use "../../../shared/scss/variables/shadows";
 
 .content {
   display: flex;

@@ -1,0 +1,17 @@
+.pop-enter-from, .pop-leave-to {
+    opacity: 0%;
+    transform: scale(0);
+}
+
+.pop-enter-to, .pop-leave-from {
+    opacity: 100%;
+    transform: scale(1);
+}
+
+.pop-enter-active, .pop-leave-active, .pop-move {
+    transition: all 1s ease;
+}
+
+.list-leave-active {
+    position: absolute;
+}

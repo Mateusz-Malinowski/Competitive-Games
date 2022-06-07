@@ -2,48 +2,62 @@
   <Navbar />
   <div class="limiter">
     <div class="wrapper wrapper-minesweeper">
-      <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
-        <StartScreen :handlePlay="startGame">
-          <template #gameName>Minesweeper</template>
-          <template #gameDescription>
-            Welcome to Minesweeper game! Your objective is to reveal all fields
-            that don't contain a hidden bomb. First reveal is always safe. Use
-            numbers displayed in some of the revealed fields to deduce further
-            squares that are safe to reveal. The number indicates a count of
-            bombs hidden in the adjacent fields (i.e. squares that are next to
-            the number - also diagonally). Use flags to mark fields containing a
-            bomb (you don't have use flags to win the game). Be careful, have
-            fun and don't forget to be fast!
-          </template>
-          <template #controls>
-            <Control>
-              <template #image><img :src="LMBPath" alt="LMB" /></template>
-              <template #description>Reveal field</template>
-            </Control>
-            <Control>
-              <template #image><img :src="RMBPath" alt="RMB" /></template>
-              <template #description>Place/Take flag</template>
-            </Control>
-          </template>
-        </StartScreen>
-      </div>
-      <div v-if="gameStatus === GameStatus.GameMode" class="content-block content-game-modes">
-        <GameModes />
-      </div>
-      <template v-if="gameStatus === GameStatus.Playing">
-        <div class="content-block content-game-info">
-          <MapInfo />
+      <Transition name="swipe" appear mode="out-in">
+        <div
+          v-if="gameStatus === GameStatus.Start"
+          class="content-block content-start"
+        >
+          <StartScreen :handlePlay="handlePlay">
+            <template #gameName>Minesweeper</template>
+            <template #gameDescription>
+              Welcome to Minesweeper game! Your objective is to reveal all
+              fields that don't contain a hidden bomb. First reveal is always
+              safe. Use numbers displayed in some of the revealed fields to
+              deduce further squares that are safe to reveal. The number
+              indicates a count of bombs hidden in the adjacent fields (i.e.
+              squares that are next to the number - also diagonally). Use flags
+              to mark fields containing a bomb (you don't have use flags to win
+              the game). Be careful, have fun and don't forget to be fast!
+            </template>
+            <template #controls>
+              <Control>
+                <template #image><img :src="LMBPath" alt="LMB" /></template>
+                <template #description>Reveal field</template>
+              </Control>
+              <Control>
+                <template #image><img :src="RMBPath" alt="RMB" /></template>
+                <template #description>Place/Take flag</template>
+              </Control>
+            </template>
+          </StartScreen>
         </div>
-        <div class="content-block content-game">
-          <Map />
+        <div
+          v-else-if="gameStatus === GameStatus.GameMode"
+          class="content-block content-game-modes"
+        >
+          <GameModes />
         </div>
-        <div class="content-block content-timer">
-          <Timer :store="store" />
+        <div
+          v-else-if="gameStatus === GameStatus.Playing"
+          class="playing-screen"
+        >
+          <div class="content-block content-game-info">
+            <MapInfo />
+          </div>
+          <div class="content-block content-game">
+            <Map />
+          </div>
+          <div class="content-block content-timer">
+            <Timer :store="store" />
+          </div>
         </div>
-      </template>
-      <div v-if="gameStatus === GameStatus.Results" class="content-block content-results">
-        <Results :store="store" />
-      </div>
+        <div
+          v-else-if="gameStatus === GameStatus.Results"
+          class="content-block content-results"
+        >
+          <Results :store="store" />
+        </div>
+      </Transition>
     </div>
   </div>
   <Footer />
@@ -86,7 +100,7 @@ export default defineComponent({
     const store = computed(() => useStore());
     const gameStatus = computed(() => store.value.state.game.gameStatus);
 
-    const startGame = (): void => {
+    const handlePlay = (): void => {
       store.value.commit("game/setGameStatus", GameStatus.GameMode);
     };
 
@@ -122,7 +136,7 @@ export default defineComponent({
       handleEndGame(packet.time, GameResult.Win);
     };
 
-    return { store, gameStatus, GameStatus, startGame, LMBPath, RMBPath };
+    return { store, gameStatus, GameStatus, handlePlay, LMBPath, RMBPath };
   },
   async mounted() {
     const webSocketController = new WebSocketController();
@@ -147,31 +161,41 @@ export default defineComponent({
   display: flex;
   align-items: flex-start;
   @extend %noselect;
+  position: relative;
 
-  > .content-block {
-    margin-left: measurements.$page-spacing;
+  .playing-screen {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
 
-    &:first-child {
-      margin-left: 0;
+    > .content-block {
+      margin-left: measurements.$page-spacing;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+
+    .content-game-info,
+    .content-timer {
+      flex: 1 1 0;
+    }
+
+    .content-game {
+      flex: 2 1 0;
+    }
+
+    .content-timer {
+      text-align: center;
+      font-size: 2rem;
     }
   }
 
-  .content-start, .content-game-modes, .content-results {
+  .content-start,
+  .content-game-modes,
+  .content-results {
     display: flex;
     width: 100%;
-  }
-
-  .content-game-info, .content-timer {
-    flex: 1 1 0;
-  }
-
-  .content-game {
-    flex: 2 1 0;
-  }
-
-  .content-timer {
-    text-align: center;
-    font-size: 2rem;
   }
 }
 </style>

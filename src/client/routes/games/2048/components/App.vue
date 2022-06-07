@@ -2,39 +2,48 @@
   <Navbar />
   <div class="limiter">
     <div class="wrapper wrapper-2048">
-      <div v-if="gameStatus === GameStatus.Start" class="content-block content-start">
-        <StartScreen :handlePlay="startGame">
-          <template #gameName>2048</template>
-          <template #gameDescription>
-            Welcome to 2048! Your goal is to reach the tile with the number 2048. 
-            You move all tiles in one direction at once. Tiles with the same number 
-            are merged together to form a new tile with doubled number. Two tiles appear 
-            initially on the board. After every move, one tile appears in an empty space. 
-            If there's no empty spaces after a move, you lose! Just getting to 2048 can be 
-            a challenge. The clock is ticking!
-          </template>
-          <template #controls>
-            <Control>
-              <template #image><img :src="arrowsPath" alt="RMB" /></template>
-              <template #description>Move tiles</template>
-            </Control>
-          </template>
-        </StartScreen>
-      </div>
-      <template v-if="gameStatus === GameStatus.Playing">
-        <div class="content-block content-game-info">
-          <BoardInfo />
+      <Transition name="swipe" appear mode="out-in">
+        <div
+          v-if="gameStatus === GameStatus.Start"
+          class="content-block content-start"
+        >
+          <StartScreen :handlePlay="startGame">
+            <template #gameName>2048</template>
+            <template #gameDescription>
+              Welcome to 2048! Your goal is to reach the tile with the number
+              2048. You move all tiles in one direction at once. Tiles with the
+              same number are merged together to form a new tile with doubled
+              number. Two tiles appear initially on the board. After every move,
+              one tile appears in an empty space. If there's no empty spaces
+              after a move, you lose! Just getting to 2048 can be a challenge.
+              The clock is ticking!
+            </template>
+            <template #controls>
+              <Control>
+                <template #image><img :src="arrowsPath" alt="RMB" /></template>
+                <template #description>Move tiles</template>
+              </Control>
+            </template>
+          </StartScreen>
         </div>
-        <div class="content-block content-game">
-          <Board />
+        <div v-else-if="gameStatus === GameStatus.Playing" class="playing-screen">
+          <div class="content-block content-game-info">
+            <BoardInfo />
+          </div>
+          <div class="content-block content-game">
+            <Board />
+          </div>
+          <div class="content-block content-timer">
+            <Timer :store="store" />
+          </div>
         </div>
-        <div class="content-block content-timer">
-          <Timer :store="store" />
+        <div
+          v-else-if="gameStatus === GameStatus.Results"
+          class="content-block content-results"
+        >
+          <Results :store="store" v-if="gameStatus === GameStatus.Results" />
         </div>
-      </template>
-      <div v-if="gameStatus === GameStatus.Results" class="content-block content-results">
-        <Results :store="store" v-if="gameStatus === GameStatus.Results" />
-      </div>
+      </Transition>
     </div>
   </div>
   <Footer />
@@ -60,7 +69,16 @@ import arrowsPath from "url:../../../../shared/assets/controls/arrows.svg";
 import BoardInfo from "./modules/BoardInfo.vue";
 
 export default defineComponent({
-  components: { Navbar, Footer, Board, StartScreen, Timer, Results, Control, BoardInfo },
+  components: {
+    Navbar,
+    Footer,
+    Board,
+    StartScreen,
+    Timer,
+    Results,
+    Control,
+    BoardInfo,
+  },
   setup() {
     const store = computed(() => useStore());
 
@@ -130,31 +148,40 @@ export default defineComponent({
   display: flex;
   align-items: flex-start;
   @extend %noselect;
+  position: relative;
 
-  > .content-block {
-    margin-left: measurements.$page-spacing;
+  .playing-screen {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
 
-    &:first-child {
-      margin-left: 0;
+    > .content-block {
+      margin-left: measurements.$page-spacing;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+
+    .content-game-info,
+    .content-timer {
+      flex: 1 1 0;
+    }
+
+    .content-game {
+      flex: 2 1 0;
+    }
+
+    .content-timer {
+      text-align: center;
+      font-size: 2rem;
     }
   }
 
-  .content-start, .content-results {
+  .content-start,
+  .content-results {
     display: flex;
     width: 100%;
-  }
-
-  .content-game-info, .content-timer {
-    flex: 1 1 0;
-  }
-
-  .content-game {
-    flex: 2 1 0;
-  }
-
-  .content-timer {
-    text-align: center;
-    font-size: 2rem;
   }
 }
 </style>

@@ -1,10 +1,12 @@
 <template>
   <Navbar />
-  <Slider class="slider" />
+  <Transition name="pop" appear>
+    <Slider class="slider" />
+  </Transition>
   <div class="limiter">
     <div class="wrapper">
       <InfoTiles />
-      <GameLinks />
+      <GameLinks v-transition-in-viewport="'swipe'" />
     </div>
   </div>
   <Footer />

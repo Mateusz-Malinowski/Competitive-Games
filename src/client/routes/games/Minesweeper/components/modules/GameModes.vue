@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from "vue";
+import { defineComponent, ref } from "vue";
 import StateButton from "../../../../../shared/components/StateButton.vue";
 import AnimatedButton from "../../../../../shared/components/AnimatedButton.vue";
 import gameModes from "../../../../../../global/games/Minesweeper/gameModes.json";
