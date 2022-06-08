@@ -14,9 +14,9 @@
 }
 
 .swipe-enter-active, .swipe-leave-active, .swipe-move {
-    transition: all 1s ease;
+    transition: all 1s ease !important;
 }
 
 .swipe-leave-active {
-    position: absolute;
+    position: absolute !important;
 }

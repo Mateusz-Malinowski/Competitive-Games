@@ -130,9 +130,7 @@ export default defineComponent({
   border-radius: measurements.$border-radius;
   overflow: hidden;
   outline: 1px solid black;
-  transition-property: box-shadow;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
+  transition: box-shadow 0.3s ease;
   @extend %noselect;
 
   .video-wrapper {

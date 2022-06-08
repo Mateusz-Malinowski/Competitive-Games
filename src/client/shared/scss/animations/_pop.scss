@@ -9,9 +9,9 @@
 }
 
 .pop-enter-active, .pop-leave-active, .pop-move {
-    transition: all 1s ease;
+    transition: all 1s ease !important;
 }
 
 .list-leave-active {
-    position: absolute;
+    position: absolute !important;
 }
