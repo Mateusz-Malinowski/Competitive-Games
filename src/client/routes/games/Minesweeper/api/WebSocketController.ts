@@ -13,7 +13,7 @@ export default class WebSocketController {
 
   public connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      WebSocketController.webSocket = new WebSocket(`ws://localhost:${process.env.PORT || 3000}/Minesweeper`);
+      WebSocketController.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws') + "/Minesweeper");
 
       WebSocketController.webSocket.addEventListener('error', () => {
         reject();
