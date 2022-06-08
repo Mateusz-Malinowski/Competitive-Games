@@ -16,7 +16,7 @@
       :isNew="tile.isNew"
     />
   </div>
-  <KeyboardEvents @keyup="handleKeyUp" />
+  <KeyboardEvents @keydown="handleKeyDown" />
 </template>
 
 <script lang="ts">
@@ -136,11 +136,13 @@ export default defineComponent({
       }
     };
 
-    const handleKeyUp = async (keyName: string): Promise<void> => {
+    const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
+      // prevent scrolling while playing
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") event.preventDefault();
       if (!movementEnabled.value) return;
 
       let direction;
-      switch (keyName) {
+      switch (event.key) {
         case "ArrowLeft":
           direction = Direction.Left;
           break;
@@ -389,7 +391,7 @@ export default defineComponent({
       tiles,
       fieldStyles,
       adjustSize,
-      handleKeyUp,
+      handleKeyDown,
     };
   },
   mounted() {

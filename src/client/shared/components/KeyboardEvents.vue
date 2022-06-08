@@ -6,22 +6,22 @@
 import { defineComponent } from "vue";
 
 interface Emits {
-  (name: 'keyup', keyName: string): void;
+  (name: 'keydown', event: KeyboardEvent): void;
 }
 
 export default defineComponent({
   setup(props, { emit }: { emit: Emits }) {
-    const handleKeyUp = (event: KeyboardEvent): void => {
-      emit('keyup', event.key);
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      emit('keydown', event);
     };
 
-    return { handleKeyUp };
+    return { handleKeyDown };
   },
   mounted() {
-    window.addEventListener("keyup", this.handleKeyUp);
+    window.addEventListener("keydown", this.handleKeyDown);
   },
   unmounted() {
-    window.removeEventListener("keyup", this.handleKeyUp);
+    window.removeEventListener("keydown", this.handleKeyDown);
   },
 });
 </script>
