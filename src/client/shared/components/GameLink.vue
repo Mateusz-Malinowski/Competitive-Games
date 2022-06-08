@@ -130,7 +130,7 @@ export default defineComponent({
   border-radius: measurements.$border-radius;
   overflow: hidden;
   outline: 1px solid black;
-  transition-property: box-shadow, transform;
+  transition-property: box-shadow;
   transition-duration: 0.3s;
   transition-timing-function: ease;
   @extend %noselect;
@@ -176,7 +176,6 @@ export default defineComponent({
 
   &:hover {
     box-shadow: shadows.$game-link-hover;
-    transform: scale(1.05);
 
     .overlay {
       background-color: rgba(0, 0, 0, 0.25);
