@@ -1,13 +1,17 @@
 <template>
   <div class="slider">
-    <div class="slides">
+    <div ref="slidesElement" class="slides">
       <div
         class="slide"
         v-for="i in slides.length + 1"
         :key="i"
         ref="slideElements"
       >
-        <img class="image-base" :src="slides[(i - 1) % slides.length].imgPath" :alt="slides[(i - 1) % slides.length].title" />
+        <img
+          class="image-base"
+          :src="slides[(i - 1) % slides.length].imgPath"
+          :alt="slides[(i - 1) % slides.length].title"
+        />
         <img
           class="image-large-laptop"
           :src="slides[(i - 1) % slides.length].imgPathLargeLaptop"
@@ -17,23 +21,21 @@
           class="overlay"
           :href="slides[(i - 1) % slides.length].link"
           :class="{
-            left: slides[(i - 1) % slides.length].contentSide === ContentSide.Right,
-            right: slides[(i - 1) % slides.length].contentSide === ContentSide.Left,
+            left:
+              slides[(i - 1) % slides.length].contentSide === ContentSide.Right,
+            right:
+              slides[(i - 1) % slides.length].contentSide === ContentSide.Left,
           }"
         >
-          <h2 class="header">{{ slides[(i - 1) % slides.length].title }}</h2>
+          <h2 class="header" v-html="slides[(i - 1) % slides.length].title"></h2>
         </a>
       </div>
     </div>
     <a class="slider-control navigation-before" @click="previousSlide">
-      <span class="material-symbols-rounded">
-        navigate_before
-      </span>
+      <span class="material-symbols-rounded">navigate_before</span>
     </a>
     <a class="slider-control navigation-next" @click="nextSlide">
-      <span class="material-symbols-rounded">
-        navigate_next
-      </span>
+      <span class="material-symbols-rounded">navigate_next</span>
     </a>
   </div>
 </template>
@@ -62,10 +64,10 @@ interface Slide {
 
 export default defineComponent({
   setup() {
-    const slideElements = ref<NodeListOf<HTMLDivElement>>();
+    const slidesElement = ref<HTMLDivElement>();
     const slides: Slide[] = [
       {
-        title: "Here we compete.",
+        title: "Here we<br>compete.",
         imgPath: sliderLogoMiddle,
         imgPathLargeLaptop: sliderLogoLeft,
         contentSide: ContentSide.Left,
@@ -89,22 +91,20 @@ export default defineComponent({
     let index = 0;
 
     const previousSlide = (): void => {
-      const elements = slideElements.value as NodeListOf<HTMLDivElement>;
-
       if (index === 0) {
-        const newIndex = elements.length - 1;
+        // first slide is in slider twice
+        const newIndex = slides.length;
         index = newIndex;
         scrollInstant();
       }
-      
+
       index--;
       scrollSmoothly();
     };
 
     const nextSlide = (): void => {
-      const elements = slideElements.value as NodeListOf<HTMLDivElement>;
-
-      if (index === elements.length - 1) {
+      // first slide is in slider twice
+      if (index === slides.length) {
         const newIndex = 0;
         index = newIndex;
         scrollInstant();
@@ -115,30 +115,32 @@ export default defineComponent({
     };
 
     const scrollInstant = (): void => {
-      const elements = slideElements.value as NodeListOf<HTMLDivElement>;
-      elements[index].scrollIntoView({ block: "end", inline: "start" });
-    }
+      const slidesElementDiv = slidesElement.value as HTMLDivElement;
+      slidesElementDiv.scroll({ left: index * slidesElementDiv.clientWidth });
+    };
 
     const scrollSmoothly = (): void => {
-      const elements = slideElements.value as NodeListOf<HTMLDivElement>;
-      elements[index].scrollIntoView({ behavior: "smooth", block: "end", inline: "start" });
+      const slidesElementDiv = slidesElement.value as HTMLDivElement;
+      slidesElementDiv.scroll({
+        left: index * slidesElementDiv.clientWidth,
+        behavior: "smooth",
+      });
     };
 
     return {
+      slidesElement,
       slides,
-      slideElements,
       ContentSide,
       previousSlide,
       nextSlide,
-      scrollSmoothly,
+      scrollInstant,
     };
   },
   mounted() {
-    this.slideElements = document.querySelectorAll(".slider .slide") as NodeListOf<HTMLDivElement>;
-    window.addEventListener("resize", this.scrollSmoothly);
+    window.addEventListener("resize", this.scrollInstant);
   },
   unmounted() {
-    window.removeEventListener("resize", this.scrollSmoothly);
+    window.removeEventListener("resize", this.scrollInstant);
   },
 });
 </script>
@@ -195,7 +197,7 @@ export default defineComponent({
         background-color: rgba(0, 0, 0, 0.5);
 
         .header {
-          font-size: 2.5rem;
+          font-size: 2.3rem;
           text-align: center;
           text-shadow: shadows.$main;
         }
@@ -204,7 +206,6 @@ export default defineComponent({
   }
 
   .slider-control {
-    display: none;
     position: absolute;
     opacity: 30%;
     transition: opacity 0.3s ease;
@@ -224,7 +225,7 @@ export default defineComponent({
     }
 
     span {
-      font-size: 8rem;
+      font-size: 3rem;
     }
   }
 }
@@ -235,9 +236,15 @@ export default defineComponent({
       .slide {
         .overlay {
           .header {
-            font-size: 3.5rem;
+            font-size: 3rem;
           }
         }
+      }
+    }
+
+    .slider-control {
+      span {
+        font-size: 5rem;
       }
     }
   }
@@ -249,9 +256,15 @@ export default defineComponent({
       .slide {
         .overlay {
           .header {
-            font-size: 5rem;
+            font-size: 4rem;
           }
         }
+      }
+    }
+
+    .slider-control {
+      span {
+        font-size: 8rem;
       }
     }
   }
@@ -275,7 +288,7 @@ export default defineComponent({
           grid-template-columns: 1fr 1fr;
 
           .header {
-            font-size: 6rem;
+            font-size: 3.5rem;
             text-align: left;
           }
 
@@ -301,10 +314,6 @@ export default defineComponent({
         }
       }
     }
-
-    .slider-control {
-      display: unset;
-    }
   }
 }
 
@@ -314,7 +323,7 @@ export default defineComponent({
       .slide {
         .overlay {
           .header {
-            font-size: 8rem;
+            font-size: 6rem;
           }
         }
       }
