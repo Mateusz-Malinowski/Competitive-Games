@@ -2,10 +2,6 @@
   "name": "competitive-games",
   "version": "1.0.0",
   "description": "competitive-games",
-  "engines": {
-    "node": ">=16.13.0",
-    "npm": ">=8.1.0"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clear": "rimraf dist .parcel-cache",
