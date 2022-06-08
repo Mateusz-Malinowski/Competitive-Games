@@ -13,7 +13,7 @@ export default class WebSocketController {
 
   public connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      WebSocketController.webSocket = new WebSocket(`ws://localhost:3000/2048`);
+      WebSocketController.webSocket = new WebSocket(`ws://localhost:${process.env.PORT || 3000}/2048`);
 
       WebSocketController.webSocket.addEventListener('error', () => {
         reject();
