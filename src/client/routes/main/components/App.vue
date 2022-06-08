@@ -16,7 +16,7 @@
 import { defineComponent } from "vue";
 import Navbar from "../../../shared/components/Navbar.vue";
 import Footer from "../../../shared/components/Footer.vue";
-import GameLinks from "../../../shared/components/GameLinks.vue";
+import GameLinks from "../components/GameLinks.vue";
 import Slider from "./modules/Slider.vue";
 import InfoTiles from "./modules/InfoTiles.vue";
 
