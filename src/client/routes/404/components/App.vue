@@ -1,9 +1,7 @@
 <template>
   <div class="limiter">
     <div class="content">
-      <Transition name="swipe" appear>
-        <img :src="imgSrc404" alt="404" class="img-404" />
-      </Transition>
+      <img :src="imgSrc404" alt="404" class="img-404" />
       <Transition name="swipe" appear>
         <h2>Hey! No competition here!</h2>
       </Transition>
@@ -11,8 +9,10 @@
         <h3>Go back home and play Competitve Games!</h3>
       </Transition>
       <Transition name="pop" appear>
-        <AnimatedButton class="button-home" href="/">Go back home</AnimatedButton>
-      </Transition>  
+        <AnimatedButton class="button-home" href="/"
+          >Go back home</AnimatedButton
+        >
+      </Transition>
     </div>
   </div>
 </template>
@@ -43,34 +43,34 @@ export default defineComponent({
   align-items: center;
   height: 100vh;
   padding: measurements.$page-spacing;
-}
 
-.img-404 {
-  width: 100%;
-  max-height: 50vh;
-  filter: drop-shadow(shadows.$icon);
-}
+  .img-404 {
+    width: 100%;
+    max-height: 50vh;
+    filter: drop-shadow(shadows.$icon);
+  }
 
-h2,
-h3,
-.button-home {
-  margin-top: measurements.$page-spacing;
-}
+  h2,
+  h3,
+  .button-home {
+    margin-top: measurements.$page-spacing;
+  }
 
-h2,
-h3 {
-  text-align: center;
-}
+  h2,
+  h3 {
+    text-align: center;
+  }
 
-h2 {
-  font-size: 2.5rem;
-}
+  h2 {
+    font-size: 2.5rem;
+  }
 
-h3 {
-  font-size: 1.5rem;
-}
+  h3 {
+    font-size: 1.5rem;
+  }
 
-.button-home {
-  font-size: 1.5rem;
+  .button-home {
+    font-size: 1.5rem;
+  }
 }
 </style>
