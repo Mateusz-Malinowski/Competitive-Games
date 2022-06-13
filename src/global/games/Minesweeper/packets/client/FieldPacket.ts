@@ -1,3 +1,4 @@
+import PacketValidationSchema from "../../../../PacketValidationSchema";
 import ClientPacket from "./ClientPacket";
 import { ClientPacketType } from "./ClientPacketType";
 
@@ -6,10 +7,18 @@ export default class FieldPacket extends ClientPacket {
   public row: number;
   public column: number;
 
-  constructor(row: number, column: number) {
+  public constructor(row: number, column: number) {
     super();
 
     this.row = row;
     this.column = column;
+  }
+
+  public static getValidationSchema(): PacketValidationSchema {
+    return {
+      type: { required: true, type: 'number' },
+      row: { required: true, type: 'number' },
+      column: { required: true, type: 'number' },
+    }
   }
 }

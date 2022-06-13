@@ -24,12 +24,6 @@ export default class Map {
     this.numberOfMines = numberOfMines;
   }
 
-  public rowAndColumnExists(row: number, column: number): Boolean {
-    if (row < 0 || column < 0 || row >= this.numberOfRows || column >= this.numberOfColumns) return false;
-
-    return true;
-  }
-
   public handleInput(row: number, column: number): void {
     const field = this.fields[row][column];
 
@@ -65,6 +59,12 @@ export default class Map {
     this.handleInput(firstFieldRow, firstFieldColumn);
 
     this.timer.start();
+  }
+
+  public fieldExists(row: number, column: number): Boolean {
+    if (row < 0 || column < 0 || row >= this.numberOfRows || column >= this.numberOfColumns) return false;
+
+    return true;
   }
 
   private init(): void {
@@ -123,7 +123,7 @@ export default class Map {
   }
 
   private incrementFieldNumber(row: number, column: number): void {
-    if (!this.rowAndColumnExists(row, column)) return;
+    if (!this.fieldExists(row, column)) return;
 
     const field = this.fields[row][column];
 
@@ -153,7 +153,7 @@ export default class Map {
   }
 
   private sendNearEmptyFields(row: number, column: number): void {
-    if (!this.rowAndColumnExists(row, column)) return;
+    if (!this.fieldExists(row, column)) return;
 
     const field = this.fields[row][column];
 
