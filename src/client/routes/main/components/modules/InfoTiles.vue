@@ -35,7 +35,7 @@
           shortest possible time. You can see your current position in the
           leaderboard preview. You start the game being first in the leaderboard
           and you fall down when the game takes you longer than the player below
-          you.
+          you in the standings.
         </template>
       </InfoTile>
       <InfoTile v-transition-in-viewport="'swipe'">
@@ -57,7 +57,7 @@
         <template #header>Score madness</template>
         <template #content>
           In score madness games, your goal is to achieve the highest score
-          possible. You can see your current position in the Leaderboard
+          possible. You can see your current position in the leaderboard
           preview. You start the game being the last one in the leaderboard and
           you climb up as you score more points.
         </template>

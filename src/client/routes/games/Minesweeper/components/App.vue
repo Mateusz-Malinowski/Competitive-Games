@@ -16,7 +16,7 @@
               deduce further squares that are safe to reveal. The number
               indicates a count of bombs hidden in the adjacent fields (i.e.
               squares that are next to the number - also diagonally). Use flags
-              to mark fields containing a bomb (you don't have use flags to win
+              to mark fields containing a bomb (you don't have to use flags to win
               the game). Be careful, have fun and don't forget to be fast!
             </template>
             <template #controls>
