@@ -1,5 +1,4 @@
 import { FieldState } from '../../../../../../global/games/Minesweeper/FieldState';
-import { initialize2dArray } from '../../../../../../global/utilities';
 import FieldPacket from '../../../../../../global/games/Minesweeper/packets/server/FieldPacket';
 import { MutationTree } from 'vuex';
 

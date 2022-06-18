@@ -1,47 +1,54 @@
-export function padNumber(number: string | number, length: number): string {
+export function padNumber(number: number, length: number): string {
   let string = number.toString();
 
-  while (string.length < length) {
-    string = '0' + string;
-  }
+  if (number < 0)
+    while (string.length < length + 1)
+      string = string.slice(0, 1) + '0' + string.slice(1);
+  else
+    while (string.length < length)
+      string = '0' + string;
 
   return string;
 }
 
 export function getTimeString(totalMiliseconds: number): string {
-  const totalSeconds = Math.floor(totalMiliseconds / 1000);
+  const totalSeconds = Math.floor(Math.abs(totalMiliseconds) / 1000);
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);
-
-  const miliseconds = totalMiliseconds % 1000;
+  const miliseconds = Math.abs(totalMiliseconds) % 1000;
   const seconds = totalSeconds % 60;
   const minutes = totalMinutes % 60;
   const hours = totalHours % 60;
-
   const milisecondsString = padNumber(miliseconds, 3);
   const secondsString = padNumber(seconds, 2);
   const minutesString = padNumber(minutes, 2);
   const hoursString = padNumber(hours, 2);
 
-  return `${hoursString}:${minutesString}:${secondsString}.${milisecondsString}`;
+  return `${totalMiliseconds < 0 ? '-' : ''}${hoursString}:${minutesString}:${secondsString}.${milisecondsString}`;
 }
 
-export function getCurrentDateString(date: Date): string {
+export function getCurrentDateString(date: Date, separator: string = '.'): string {
   const day = padNumber(date.getDate(), 2);
   const month = padNumber(date.getMonth() + 1, 2);
   const year = date.getFullYear();
 
-  return `${year}.${month}.${day}`;
+  return `${year}${separator}${month}${separator}${day}`;
 }
 
-export function getCurrentTimeString(date: Date): string {
+export function getCurrentTimeString(date: Date, separator: string = ':'): string {
   const hours = padNumber(date.getHours(), 2);
   const minutes = padNumber(date.getMinutes(), 2);
   const seconds = padNumber(date.getSeconds(), 2);
 
-  return `${hours}:${minutes}:${seconds}`;
+  return `${hours}${separator}${minutes}${separator}${seconds}`;
 }
 
+/**
+ * Removes provided element from an array. Only the first encountered element is removed.
+ * 
+ * @param array array to be modified
+ * @param element element to be removed
+ */
 export function removeElementFromArray<T>(array: Array<T>, element: T): void {
   const index = array.indexOf(element);
   array.splice(index, 1);
