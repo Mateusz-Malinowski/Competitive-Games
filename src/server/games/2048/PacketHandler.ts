@@ -32,7 +32,7 @@ export default class PacketHandler extends ServerPacketHandler {
     try {
       object = this.packetValidator.validateClientPacket(packet) as ClientPacket;
     } catch (e) {
-      return Logger.error(`${e} from ${this.player.ip}`);
+      return Logger.error(`${this.player.ip} ${e}`);
     }
 
     switch (object.type) {

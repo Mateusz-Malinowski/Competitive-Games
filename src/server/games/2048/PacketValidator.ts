@@ -2,6 +2,7 @@ import { ClientPacketType } from "../../../global/games/2048/packets/client/Clie
 import MoveTilesPacket from "../../../global/games/2048/packets/client/MoveTilesPacket";
 import StartGamePacket from "../../../global/games/2048/packets/client/StartGamePacket";
 import PacketValidationSchema from "../../../global/PacketValidationSchema";
+import PacketValidationError from "../../errors/PacketValidationError";
 import ServerPacketValidator from "../../ServerPacketValidator";
 
 export default class PacketValidator extends ServerPacketValidator {
@@ -12,7 +13,7 @@ export default class PacketValidator extends ServerPacketValidator {
       case ClientPacketType.MoveTiles:
         return MoveTilesPacket.getValidationSchema();
       default:
-        throw "Unknown packet type";
+        throw new PacketValidationError('Unknown packet type');
     }
   }
 }

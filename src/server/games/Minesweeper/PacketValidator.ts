@@ -3,6 +3,7 @@ import StartGamePacket from "../../../global/games/Minesweeper/packets/client/St
 import FieldPacket from "../../../global/games/Minesweeper/packets/client/FieldPacket";
 import PacketValidationSchema from "../../../global/PacketValidationSchema";
 import ServerPacketValidator from "../../ServerPacketValidator";
+import PacketValidationError from "../../errors/PacketValidationError";
 
 export default class PacketValidator extends ServerPacketValidator {
   protected getPacketValidationSchema(packet: object, type: number): PacketValidationSchema {
@@ -12,7 +13,7 @@ export default class PacketValidator extends ServerPacketValidator {
       case ClientPacketType.Field:
         return FieldPacket.getValidationSchema();
       default:
-        throw "Unknown packet type";
+        throw new PacketValidationError('Unknown packet type');
     }
   }
 }
