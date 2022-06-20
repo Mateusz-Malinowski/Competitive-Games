@@ -1,10 +1,12 @@
 <template>
   <Navbar />
-  <div class="limiter">
-    <div class="wrapper">
-      <GameLinks />
+  <main>
+    <div class="limiter">
+      <div class="wrapper">
+        <GameLinks />
+      </div>
     </div>
-  </div>
+  </main>
   <Footer />
 </template>
 

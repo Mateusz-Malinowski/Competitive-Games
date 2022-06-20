@@ -1,65 +1,68 @@
 <template>
   <Navbar />
-  <div class="limiter">
-    <div class="wrapper wrapper-minesweeper">
-      <Transition name="swipe" appear mode="out-in">
-        <div
-          v-if="gameStatus === GameStatus.Start"
-          class="content-block content-start"
-        >
-          <StartScreen :handlePlay="handlePlay">
-            <template #gameName>Minesweeper</template>
-            <template #gameDescription>
-              Welcome to Minesweeper game! Your objective is to reveal all
-              fields that don't contain a hidden bomb. First reveal is always
-              safe. Use numbers displayed in some of the revealed fields to
-              deduce further squares that are safe to reveal. The number
-              indicates a count of bombs hidden in the adjacent fields (i.e.
-              squares that are next to the number - also diagonally). Use flags
-              to mark fields containing a bomb (you don't have to use flags to win
-              the game). Be careful, have fun and don't forget to be fast!
-            </template>
-            <template #controls>
-              <Control>
-                <template #image><img :src="LMBPath" alt="LMB" /></template>
-                <template #description>Reveal field</template>
-              </Control>
-              <Control>
-                <template #image><img :src="RMBPath" alt="RMB" /></template>
-                <template #description>Place/Take flag</template>
-              </Control>
-            </template>
-          </StartScreen>
-        </div>
-        <div
-          v-else-if="gameStatus === GameStatus.GameMode"
-          class="content-block content-game-modes"
-        >
-          <GameModes />
-        </div>
-        <div
-          v-else-if="gameStatus === GameStatus.Playing"
-          class="playing-screen"
-        >
-          <div class="content-block content-game-info">
-            <MapInfo />
+  <main>
+    <div class="limiter">
+      <div class="wrapper wrapper-minesweeper">
+        <Transition name="swipe" appear mode="out-in">
+          <div
+            v-if="gameStatus === GameStatus.Start"
+            class="content-block content-start"
+          >
+            <StartScreen :handlePlay="handlePlay">
+              <template #gameName>Minesweeper</template>
+              <template #gameDescription>
+                Welcome to Minesweeper game! Your objective is to reveal all
+                fields that don't contain a hidden bomb. First reveal is always
+                safe. Use numbers displayed in some of the revealed fields to
+                deduce further squares that are safe to reveal. The number
+                indicates a count of bombs hidden in the adjacent fields (i.e.
+                squares that are next to the number - also diagonally). Use
+                flags to mark fields containing a bomb (you don't have to use
+                flags to win the game). Be careful, have fun and don't forget to
+                be fast!
+              </template>
+              <template #controls>
+                <Control>
+                  <template #image><img :src="LMBPath" alt="LMB" /></template>
+                  <template #description>Reveal field</template>
+                </Control>
+                <Control>
+                  <template #image><img :src="RMBPath" alt="RMB" /></template>
+                  <template #description>Place/Take flag</template>
+                </Control>
+              </template>
+            </StartScreen>
           </div>
-          <div class="content-block content-game">
-            <Map />
+          <div
+            v-else-if="gameStatus === GameStatus.GameMode"
+            class="content-block content-game-modes"
+          >
+            <GameModes />
           </div>
-          <div class="content-block content-timer">
-            <Timer :store="store" />
+          <div
+            v-else-if="gameStatus === GameStatus.Playing"
+            class="playing-screen"
+          >
+            <div class="content-block content-game-info">
+              <MapInfo />
+            </div>
+            <div class="content-block content-game">
+              <Map />
+            </div>
+            <div class="content-block content-timer">
+              <Timer :store="store" />
+            </div>
           </div>
-        </div>
-        <div
-          v-else-if="gameStatus === GameStatus.Results"
-          class="content-block content-results"
-        >
-          <Results :store="store" />
-        </div>
-      </Transition>
+          <div
+            v-else-if="gameStatus === GameStatus.Results"
+            class="content-block content-results"
+          >
+            <Results :store="store" />
+          </div>
+        </Transition>
+      </div>
     </div>
-  </div>
+  </main>
   <Footer />
 </template>
 

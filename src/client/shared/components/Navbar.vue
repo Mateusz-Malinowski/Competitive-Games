@@ -61,9 +61,10 @@ export default defineComponent({
 
 nav {
   display: flex;
-  position: sticky;
+  position: fixed;
   z-index: 1000;
   top: 0;
+  width: 100%;
   @extend %noselect;
 
   .navbar {

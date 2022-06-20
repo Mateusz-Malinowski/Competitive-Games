@@ -1,51 +1,53 @@
 <template>
   <Navbar />
-  <div class="limiter">
-    <div class="wrapper wrapper-2048">
-      <Transition name="swipe" appear mode="out-in">
-        <div
-          v-if="gameStatus === GameStatus.Start"
-          class="content-block content-start"
-        >
-          <StartScreen :handlePlay="startGame">
-            <template #gameName>2048</template>
-            <template #gameDescription>
-              Welcome to 2048! Your goal is to reach the tile with the number
-              2048. You move all tiles in one direction at once. Tiles with the
-              same number are merged together to form a new tile with doubled
-              number. Two tiles appear initially on the board. After every move,
-              one tile appears in an empty space. If there's no empty spaces
-              after a move, you lose! Just getting to 2048 can be a challenge.
-              The clock is ticking!
-            </template>
-            <template #controls>
-              <Control>
-                <template #image><img :src="arrowsPath" alt="RMB" /></template>
-                <template #description>Move tiles</template>
-              </Control>
-            </template>
-          </StartScreen>
-        </div>
-        <div v-else-if="gameStatus === GameStatus.Playing" class="playing-screen">
-          <div class="content-block content-game-info">
-            <BoardInfo />
+  <main>
+    <div class="limiter">
+      <div class="wrapper wrapper-2048">
+        <Transition name="swipe" appear mode="out-in">
+          <div
+            v-if="gameStatus === GameStatus.Start"
+            class="content-block content-start"
+          >
+            <StartScreen :handlePlay="startGame">
+              <template #gameName>2048</template>
+              <template #gameDescription>
+                Welcome to 2048! Your goal is to reach the tile with the number
+                2048. You move all tiles in one direction at once. Tiles with the
+                same number are merged together to form a new tile with doubled
+                number. Two tiles appear initially on the board. After every move,
+                one tile appears in an empty space. If there's no empty spaces
+                after a move, you lose! Just getting to 2048 can be a challenge.
+                The clock is ticking!
+              </template>
+              <template #controls>
+                <Control>
+                  <template #image><img :src="arrowsPath" alt="RMB" /></template>
+                  <template #description>Move tiles</template>
+                </Control>
+              </template>
+            </StartScreen>
           </div>
-          <div class="content-block content-game">
-            <Board />
+          <div v-else-if="gameStatus === GameStatus.Playing" class="playing-screen">
+            <div class="content-block content-game-info">
+              <BoardInfo />
+            </div>
+            <div class="content-block content-game">
+              <Board />
+            </div>
+            <div class="content-block content-timer">
+              <Timer :store="store" />
+            </div>
           </div>
-          <div class="content-block content-timer">
-            <Timer :store="store" />
+          <div
+            v-else-if="gameStatus === GameStatus.Results"
+            class="content-block content-results"
+          >
+            <Results :store="store" v-if="gameStatus === GameStatus.Results" />
           </div>
-        </div>
-        <div
-          v-else-if="gameStatus === GameStatus.Results"
-          class="content-block content-results"
-        >
-          <Results :store="store" v-if="gameStatus === GameStatus.Results" />
-        </div>
-      </Transition>
+        </Transition>
+      </div>
     </div>
-  </div>
+  </main>
   <Footer />
 </template>
 

@@ -1,5 +1,6 @@
 @use "../variables/colors";
 @use "../variables/shadows";
+@use "../variables/measurements";
 
 html {
     scrollbar-width: thin;
@@ -42,6 +43,10 @@ body {
         flex-direction: column;
         min-height: 100vh;
         overflow-x: hidden;
+
+        main {
+            padding-top: measurements.$navbar-height;
+        }
     }
 }
 
